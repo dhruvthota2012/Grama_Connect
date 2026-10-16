@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Language, Screen } from '../types';
 import { translations } from '../i18n/translations';
-import { Home, ArrowLeft, RotateCcw, Clock, Volume2, VolumeX, Radio, KeyRound, UserCheck } from 'lucide-react';
+import { Home, ArrowLeft, RotateCcw, Volume2, VolumeX, Radio, KeyRound, UserCheck } from 'lucide-react';
 import { replaySpeech, subscribeSpeechState } from '../utils/speechGuidance';
 
 interface HeaderProps {
@@ -49,8 +49,11 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-top-row">
         <div className="brand-group" onClick={onNavigateHome} role="button" tabIndex={0}>
           <div className="brand-badge" aria-label="GramaConnect Logo">
-            <span className="brand-badge-text">GC</span>
-            <span className="brand-badge-sprout">🌱</span>
+            <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M16 28V15" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+              <path d="M16 17C8 18 6 11 5 8c8-1 11 3 11 9Z" fill="#DDF3DF" />
+              <path d="M16 15c1-6 5-9 11-9 0 7-4 10-11 9Z" fill="#F3C969" />
+            </svg>
           </div>
           <div className="brand-titles">
             <h1 className="brand-title">{t.appTitle}</h1>
@@ -94,11 +97,12 @@ export const Header: React.FC<HeaderProps> = ({
           <div
             className={`timer-badge ${secondsRemaining <= 15 ? 'timer-urgent' : ''}`}
             title="Kiosk auto-reset timer"
+            style={{
+              background: `conic-gradient(var(--leaf) 0 ${Math.max(0, Math.min(100, (secondsRemaining / 60) * 100))}%, #DDE9F1 0)`,
+            }}
           >
-            <Clock size={18} strokeWidth={2.5} />
             <span className="timer-val">
-              {secondsRemaining}
-              {t.secondsShort}
+              {secondsRemaining}s
             </span>
           </div>
 

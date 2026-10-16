@@ -1,5 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import '@fontsource/baloo-2';
+import '@fontsource/baloo-tammudu-2';
+import '@fontsource/noto-sans';
+import '@fontsource/noto-sans-telugu';
+import '@fontsource/noto-sans-devanagari';
 import './index.css'
 import App from './App.tsx'
 

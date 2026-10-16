@@ -67,12 +67,12 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
         {/* Option 1: Looking for Work / Offer Services */}
         <button
           type="button"
-          className={`kiosk-menu-card ${selectedOption === 'LOOKING_FOR_WORK' ? 'selected-highlight' : ''}`}
+          className={`kiosk-menu-card choice-work ${selectedOption === 'LOOKING_FOR_WORK' ? 'selected-highlight' : ''}`}
           onClick={() => handleCardClick('LOOKING_FOR_WORK')}
         >
           <div className="card-top-bar">
             <span className="card-number-badge">1</span>
-            {selectedOption === 'LOOKING_FOR_WORK' ? (
+            {selectedOption === 'LOOKING_FOR_WORK' && (
               <div className="card-selected-top-controls">
                 <span className="tap-confirm-badge">{t.tapAgainToOpen}</span>
                 <span
@@ -88,26 +88,19 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
                   <Volume2 size={18} />
                 </span>
               </div>
-            ) : (
-              <span className="card-hint-badge">[ KEY 1 ]</span>
             )}
           </div>
 
           <div className="card-illustration-wrap">
             <AgriculturalIllustration name="worker_sowing" size={130} />
-            <span className="illus-caption">
-              {language === 'te'
-                ? 'వ్యవసాయ పనులు & నమోదు'
-                : language === 'hi'
-                ? 'कृषि कार्य व पंजीकरण'
-                : 'Farm Work & Registration'}
-            </span>
           </div>
 
           <div className="card-details">
             <h3 className="card-main-title">{t.optionWork}</h3>
             <p className="card-desc">{t.optionWorkSub}</p>
           </div>
+
+          <div className="card-go-arrow" aria-hidden="true">→</div>
 
           {selectedOption === 'LOOKING_FOR_WORK' && (
             <div className="card-tap-again-footer">
@@ -119,12 +112,12 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
         {/* Option 2: Need Agricultural Services */}
         <button
           type="button"
-          className={`kiosk-menu-card ${selectedOption === 'NEED_SERVICES' ? 'selected-highlight' : ''}`}
+          className={`kiosk-menu-card choice-services ${selectedOption === 'NEED_SERVICES' ? 'selected-highlight' : ''}`}
           onClick={() => handleCardClick('NEED_SERVICES')}
         >
           <div className="card-top-bar">
             <span className="card-number-badge">2</span>
-            {selectedOption === 'NEED_SERVICES' ? (
+            {selectedOption === 'NEED_SERVICES' && (
               <div className="card-selected-top-controls">
                 <span className="tap-confirm-badge">{t.tapAgainToOpen}</span>
                 <span
@@ -140,26 +133,19 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
                   <Volume2 size={18} />
                 </span>
               </div>
-            ) : (
-              <span className="card-hint-badge">[ KEY 2 ]</span>
             )}
           </div>
 
           <div className="card-illustration-wrap">
             <AgriculturalIllustration name="main_tractor" size={130} />
-            <span className="illus-caption">
-              {language === 'te'
-                ? 'ట్రాక్టర్, కూలీలు & యంత్రాల సేవలు'
-                : language === 'hi'
-                ? 'ट्रैक्टर, मजदूर व मशीन सेवाएं'
-                : 'Tractor, Workers & Machinery'}
-            </span>
           </div>
 
           <div className="card-details">
             <h3 className="card-main-title">{t.optionService}</h3>
             <p className="card-desc">{t.optionServiceSub}</p>
           </div>
+
+          <div className="card-go-arrow" aria-hidden="true">→</div>
 
           {selectedOption === 'NEED_SERVICES' && (
             <div className="card-tap-again-footer">
