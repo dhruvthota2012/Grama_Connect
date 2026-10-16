@@ -8,6 +8,7 @@ import {
 import { translations } from '../i18n/translations';
 import { DEMO_VILLAGES } from '../data/villages';
 import { AgriculturalIllustration } from '../assets/illustrations';
+import { getKioskTodayDateString } from '../utils/dailyAvailability';
 import { MapPin, Calendar, Users, AlertCircle, Search } from 'lucide-react';
 
 interface SearchFormProps {
@@ -26,8 +27,10 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   const t = translations[language];
 
   // Default date to today's ISO string (YYYY-MM-DD)
-  const todayStr = '2026-10-16';
-  const tomorrowStr = '2026-10-17';
+  const todayStr = getKioskTodayDateString();
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
 
   // State
   const [villageId, setVillageId] = useState<string>('rampur');
