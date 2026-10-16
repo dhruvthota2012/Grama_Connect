@@ -1,10 +1,8 @@
 import React from 'react';
 import { Language } from '../types';
-import { translations } from '../i18n/translations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
 import { speakText } from '../utils/speechGuidance';
 import { AgriculturalHeroBanner } from './AgriculturalHeroBanner';
-import { MapPin, Sparkles } from 'lucide-react';
 
 interface LanguageSelectionProps {
   currentLanguage: Language;
@@ -15,8 +13,6 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
   currentLanguage,
   onSelectLanguage,
 }) => {
-  const t = translations[currentLanguage];
-
   const handleLanguageChoice = (lang: Language) => {
     onSelectLanguage(lang);
     if (lang === 'en') {
@@ -37,101 +33,54 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
 
   return (
     <div className="kiosk-screen language-select-screen">
-      {/* 1. Visually engaging heading area with location badge */}
-      <div className="screen-header-center">
-        <div className="welcome-location-badge">
-          <span className="location-pulse-dot" aria-hidden="true" />
-          <MapPin size={16} className="location-pin-icon" />
-          <span className="location-name-text">
-            {currentLanguage === 'te'
-              ? 'రాంపూర్ గ్రామ పంచాయతీ కియోస్క్ కేంద్రం'
-              : currentLanguage === 'hi'
-              ? 'रामपुर ग्राम पंचायत कियोस्क केंद्र'
-              : 'Rampur Gram Panchayat Kiosk Center'}
-          </span>
-          <span className="badge-kiosk-sim">
-            <span>{t.simNotice}</span>
-          </span>
+      {/* 1. Paper-Cut Layered Sunrise Hero Banner */}
+      <AgriculturalHeroBanner language={currentLanguage} compact={false} />
+
+      {/* 2. Floating Language Tiles Bar Overlapping Hero Edge */}
+      <div className="lang">
+        <h3>
+          Select your language
+          <small style={{ font: "600 16px 'Noto Sans'", color: '#5b6b78', display: 'block', marginTop: '4px' }}>
+            భాషను ఎంచుకోండి · अपनी भाषा चुनें
+          </small>
+        </h3>
+        <div className="tiles">
+          {/* Tile 1: English */}
+          <button
+            type="button"
+            className={`tile t1 ${currentLanguage === 'en' ? 'tile-active' : ''}`}
+            onClick={() => handleLanguageChoice('en')}
+            aria-label="Select English language"
+          >
+            <b>A</b>
+            <span>English</span>
+          </button>
+
+          {/* Tile 2: Telugu */}
+          <button
+            type="button"
+            className={`tile t2 ${currentLanguage === 'te' ? 'tile-active' : ''}`}
+            onClick={() => handleLanguageChoice('te')}
+            aria-label="తెలుగు భాషను ఎంచుకోండి"
+          >
+            <b lang="te">అ</b>
+            <span lang="te">తెలుగు</span>
+          </button>
+
+          {/* Tile 3: Hindi */}
+          <button
+            type="button"
+            className={`tile t3 ${currentLanguage === 'hi' ? 'tile-active' : ''}`}
+            onClick={() => handleLanguageChoice('hi')}
+            aria-label="हिन्दी भाषा चुनें"
+          >
+            <b lang="hi">अ</b>
+            <span lang="hi">हिन्दी</span>
+          </button>
         </div>
-
-        <h1 className="main-display-title">
-          <span className="title-highlight">GRAMA</span>CONNECT
-        </h1>
-        <p className="main-display-subtitle">{t.appSubtitle}</p>
-        <div className="kiosk-divider" />
-        <h2 className="prompt-title">
-          <Sparkles size={20} className="prompt-sparkle" />
-          <span>Select your language / భాషను ఎంచుకోండి / अपनी भाषा चुनें</span>
-        </h2>
       </div>
 
-      {/* 2. Official GramaConnect Agricultural Hero Banner */}
-      <AgriculturalHeroBanner language={currentLanguage} compact={true} />
-
-      {/* 3. Premium Interactive Language Cards */}
-      <div className="language-cards-container three-col-grid">
-        {/* Option 1: English */}
-        <button
-          type="button"
-          className={`kiosk-selection-card lang-card ${
-            currentLanguage === 'en' ? 'lang-card-active' : ''
-          }`}
-          onClick={() => handleLanguageChoice('en')}
-          aria-label="Select English language"
-        >
-          <div className="card-number-badge">1</div>
-          <div className="card-cultural-icon" aria-hidden="true">🌾</div>
-          <div className="card-content-center">
-            <span className="lang-native-title">English</span>
-            <span className="lang-sub-title">STANDARD ENGLISH</span>
-            <div className="lang-card-action">
-              <span className="card-action-hint">[ Press Key 1 / Touch ]</span>
-            </div>
-          </div>
-        </button>
-
-        {/* Option 2: Telugu */}
-        <button
-          type="button"
-          className={`kiosk-selection-card lang-card ${
-            currentLanguage === 'te' ? 'lang-card-active' : ''
-          }`}
-          onClick={() => handleLanguageChoice('te')}
-          aria-label="తెలుగు భాషను ఎంచుకోండి"
-        >
-          <div className="card-number-badge">2</div>
-          <div className="card-cultural-icon" aria-hidden="true">🌿</div>
-          <div className="card-content-center">
-            <span className="lang-native-title">తెలుగు</span>
-            <span className="lang-sub-title">TELUGU</span>
-            <div className="lang-card-action">
-              <span className="card-action-hint">[ నంబర్ 2 నొక్కండి / తాకండి ]</span>
-            </div>
-          </div>
-        </button>
-
-        {/* Option 3: Hindi */}
-        <button
-          type="button"
-          className={`kiosk-selection-card lang-card ${
-            currentLanguage === 'hi' ? 'lang-card-active' : ''
-          }`}
-          onClick={() => handleLanguageChoice('hi')}
-          aria-label="हिन्दी भाषा चुनें"
-        >
-          <div className="card-number-badge">3</div>
-          <div className="card-cultural-icon" aria-hidden="true">🚜</div>
-          <div className="card-content-center">
-            <span className="lang-native-title">हिन्दी</span>
-            <span className="lang-sub-title">HINDI</span>
-            <div className="lang-card-action">
-              <span className="card-action-hint">[ नंबर 3 दबाएं / छुएं ]</span>
-            </div>
-          </div>
-        </button>
-      </div>
-
-      {/* 4. Touch & Keyboard guidance instruction bar */}
+      {/* 3. Touch & Keyboard guidance instruction bar */}
       <div className="kiosk-instructions-bar">
         <p>
           💡 <strong>Touch screen</strong> to select, or press keyboard key <strong>1</strong>,{' '}

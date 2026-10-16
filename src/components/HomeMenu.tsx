@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
-import { AgriculturalIllustration } from '../assets/illustrations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
 import { speakText } from '../utils/speechGuidance';
 import { Volume2 } from 'lucide-react';
@@ -92,7 +91,13 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
           </div>
 
           <div className="card-illustration-wrap">
-            <AgriculturalIllustration name="worker_sowing" size={130} />
+            <svg width="100" height="100" viewBox="0 0 96 96" aria-hidden="true">
+              <circle cx="48" cy="26" r="13" fill="#8A5A3A" />
+              <path d="M30 22Q48 2 66 22Z" fill="#F3C969" />
+              <path d="M28 86V60Q28 44 48 44T68 60V86Z" fill="#279653" />
+              <path d="M68 58q14-6 20 6" stroke="#8A5A3A" strokeWidth="6" fill="none" strokeLinecap="round" />
+              <path d="M88 62c-2-9 4-14 4-14s6 6 2 14" fill="#176B45" />
+            </svg>
           </div>
 
           <div className="card-details">
@@ -137,7 +142,16 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
           </div>
 
           <div className="card-illustration-wrap">
-            <AgriculturalIllustration name="main_tractor" size={130} />
+            <svg width="114" height="100" viewBox="0 0 110 96" aria-hidden="true">
+              <rect x="8" y="46" width="14" height="22" rx="3" fill="#E8A91C" />
+              <rect x="30" y="36" width="52" height="30" rx="8" fill="#C8553D" />
+              <rect x="56" y="14" width="26" height="26" rx="5" fill="#A8412D" />
+              <rect x="60" y="19" width="16" height="12" rx="2" fill="#EAF6FC" />
+              <circle cx="40" cy="68" r="18" fill="#3B2A1E" />
+              <circle cx="40" cy="68" r="8" fill="#F3C969" />
+              <circle cx="84" cy="74" r="12" fill="#3B2A1E" />
+              <circle cx="84" cy="74" r="5" fill="#F3C969" />
+            </svg>
           </div>
 
           <div className="card-details">
