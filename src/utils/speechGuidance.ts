@@ -85,13 +85,89 @@ let latestDiagnostics: SpeechDiagnostics = {
   serverTtsStatus: serverTtsStatusState,
 };
 
+let hasWarnedTeluguVoiceMissing = false;
+let speechSequenceId = 0;
+let keepAliveTimer: any = null;
+let isAudioUnlocked = false;
+
+function startKeepAlive() {
+  stopKeepAlive();
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  keepAliveTimer = setInterval(() => {
+    try {
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, 10000);
+}
+
+function stopKeepAlive() {
+  if (keepAliveTimer) {
+    clearInterval(keepAliveTimer);
+    keepAliveTimer = null;
+  }
+}
+
+/**
+ * Unlocks the Web Audio / SpeechSynthesis context on user interaction.
+ */
+export function unlockAudioContext(): void {
+  if (isAudioUnlocked || typeof window === 'undefined') return;
+  isAudioUnlocked = true;
+
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioCtx) {
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.resume();
+      const silentUtterance = new SpeechSynthesisUtterance(' ');
+      silentUtterance.volume = 0.01;
+      silentUtterance.rate = 10;
+      window.speechSynthesis.speak(silentUtterance);
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
+// Attach one-time window listeners for first interaction unlock
+if (typeof window !== 'undefined') {
+  const handleFirstInteraction = () => {
+    unlockAudioContext();
+    window.removeEventListener('pointerdown', handleFirstInteraction);
+    window.removeEventListener('keydown', handleFirstInteraction);
+    window.removeEventListener('touchstart', handleFirstInteraction);
+  };
+  window.addEventListener('pointerdown', handleFirstInteraction, { passive: true });
+  window.addEventListener('keydown', handleFirstInteraction, { passive: true });
+  window.addEventListener('touchstart', handleFirstInteraction, { passive: true });
+}
+
 // Pre-recorded audio map
 const PRE_RECORDED_AUDIO: Record<Language, Record<string, string>> = {
   te: {
     'గ్రామ కనెక్ట్కు స్వాగతం.': '/audio/te/welcome.mp3',
+    'గ్రామ కనెక్ట్‌కు స్వాగతం.': '/audio/te/welcome.mp3',
+    'గ్రామకనెక్ట్‌కి స్వాగతం.': '/audio/te/welcome.mp3',
     'భాష ఎంపిక చేయబడింది: తెలుగు. గ్రామకనెక్ట్‌కి స్వాగతం.': '/audio/te/lang_selected.mp3',
     'నాకు పని కావాలి లేదా యంత్రాలను నమోదు చేయాలి': '/audio/te/menu_work.mp3',
+    'నాకు పని కావాలి లేదా సేవలు అందించడానికి': '/audio/te/menu_work.mp3',
     'నాకు వ్యవసాయ సేవలు కావాలి. కూలీలు, ట్రాక్టర్, హార్వెస్టర్ మరియు రవాణా': '/audio/te/menu_services.mp3',
+    'నాకు వ్యవసాయ సేవలు కావాలి': '/audio/te/menu_services.mp3',
     'తెరిచేందుకు మరోసారి నొక్కండి': '/audio/te/two_tap_hint.mp3',
     'వ్యవసాయ కూలీలు. విత్తనాలు, నాట్లు, కలుపు మరియు కోత పనులకు కూలీలు': '/audio/te/cat_person.mp3',
     'ట్రాక్టర్ మరియు వ్యవసాయ పరికరాలు. నాగలి, రోటవేటర్, గొర్రు మరియు ట్రాలీ': '/audio/te/cat_tractor.mp3',
@@ -106,14 +182,18 @@ const PRE_RECORDED_AUDIO: Record<Language, Record<string, string>> = {
     'ग्राम कनेक्ट में आपका स्वागत है।': '/audio/hi/welcome.mp3',
     'भाषा चुनी गई: हिन्दी। ग्रामकनेक्ट में आपका स्वागत है।': '/audio/hi/lang_selected.mp3',
     'मुझे काम चाहिए या मशीनरी पंजीकृत करनी है': '/audio/hi/menu_work.mp3',
+    'मुझे काम चाहिए या सेवाएं प्रदान करनी हैं': '/audio/hi/menu_work.mp3',
     'मुझे कृषि सेवाएं चाहिए। श्रमिक, ट्रैक्टर, हार्वेस्टर या परिवहन': '/audio/hi/menu_services.mp3',
+    'मुझे कृषि सेवाएं चाहिए': '/audio/hi/menu_services.mp3',
     'खोलने के लिए दोबारा टैप करें': '/audio/hi/two_tap_hint.mp3',
   },
   en: {
     'welcome to gramaconnect.': '/audio/en/welcome.mp3',
     'language selected: english. welcome to gramaconnect.': '/audio/en/lang_selected.mp3',
     'i am looking for work or registering machinery': '/audio/en/menu_work.mp3',
+    'i am looking for work or offering services': '/audio/en/menu_work.mp3',
     'i need agricultural services. workers, tractor, harvester, or transport': '/audio/en/menu_services.mp3',
+    'i need agricultural services': '/audio/en/menu_services.mp3',
     'tap again to open': '/audio/en/two_tap_hint.mp3',
   },
 };
@@ -142,6 +222,11 @@ function initVoices() {
 
   if (window.speechSynthesis.onvoiceschanged !== undefined) {
     window.speechSynthesis.onvoiceschanged = load;
+  }
+  try {
+    window.speechSynthesis.addEventListener('voiceschanged', load);
+  } catch (e) {
+    // ignore
   }
 }
 
@@ -266,6 +351,9 @@ export function getVoiceMuted(): boolean {
  * Cancels all speech: stops both browser speechSynthesis and any playing HTMLAudioElement.
  */
 export function cancelSpeech() {
+  speechSequenceId++;
+  stopKeepAlive();
+
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
@@ -316,7 +404,13 @@ export function hasBrowserVoice(language: Language): boolean {
   if (!voices || voices.length === 0) return false;
 
   const targetPrefix = language === 'te' ? 'te' : language === 'hi' ? 'hi' : 'en';
-  return voices.some((v) => v.lang.toLowerCase().startsWith(targetPrefix));
+  return voices.some((v) => {
+    const langLower = v.lang.toLowerCase().replace(/_/g, '-');
+    return (
+      langLower.startsWith(targetPrefix) ||
+      (language === 'te' && (langLower.includes('te-') || v.name.toLowerCase().includes('telugu')))
+    );
+  });
 }
 
 /**
@@ -329,13 +423,31 @@ export function findBestVoice(language: Language): SpeechSynthesisVoice | undefi
     return undefined;
   }
 
-  const voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  let voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) {
+    voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      cachedVoices = voices;
+    }
+  }
   if (!voices || voices.length === 0) return undefined;
 
   const targetPrefix = language === 'te' ? 'te' : language === 'hi' ? 'hi' : 'en';
-  const langVoices = voices.filter((v) => v.lang.toLowerCase().startsWith(targetPrefix));
+  const langVoices = voices.filter((v) => {
+    const langLower = v.lang.toLowerCase().replace(/_/g, '-');
+    return (
+      langLower.startsWith(targetPrefix) ||
+      (language === 'te' && (langLower.includes('te-') || v.name.toLowerCase().includes('telugu')))
+    );
+  });
 
   if (langVoices.length === 0) {
+    if (language === 'te' && !hasWarnedTeluguVoiceMissing) {
+      hasWarnedTeluguVoiceMissing = true;
+      console.warn(
+        '[SpeechGuidance] Native Telugu (te-IN) voice is not installed in this browser/device. Voice engine falling back.'
+      );
+    }
     return undefined;
   }
 
@@ -371,7 +483,7 @@ export function findBestVoice(language: Language): SpeechSynthesisVoice | undefi
 /**
  * Plays audio through an HTMLAudioElement.
  */
-function playAudioUrl(url: string): Promise<void> {
+function playAudioUrl(url: string, seqId?: number): Promise<void> {
   return new Promise((resolve, reject) => {
     cancelSpeech();
 
@@ -379,6 +491,10 @@ function playAudioUrl(url: string): Promise<void> {
     activeAudioElement = audio;
 
     audio.onplay = () => {
+      if (seqId !== undefined && seqId !== speechSequenceId) {
+        audio.pause();
+        return;
+      }
       notifySpeechListeners(true);
     };
 
@@ -417,6 +533,9 @@ export async function speakText(
     return;
   }
 
+  // Generate unique sequence ID to prevent collision between rapid taps
+  const currentSeq = ++speechSequenceId;
+
   lastSpokenText = text;
   lastSpokenLang = language;
 
@@ -441,8 +560,8 @@ export async function speakText(
       updateDiagnostics();
 
       try {
-        await playAudioUrl(preRecordedPath);
-        if (latestDiagnostics.lastAttempt) {
+        await playAudioUrl(preRecordedPath, currentSeq);
+        if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
           latestDiagnostics.lastAttempt.status = 'success';
           updateDiagnostics();
         }
@@ -468,43 +587,76 @@ export async function speakText(
     };
     updateDiagnostics();
 
+    cancelSpeech();
+    // Chrome bug fix: Add 90ms buffer after cancel before speak
+    await new Promise((r) => setTimeout(r, 90));
+    if (speechSequenceId !== currentSeq) {
+      return;
+    }
+
     return new Promise((resolve) => {
       try {
-        cancelSpeech();
+        // Split into natural sentence chunks to prevent Chrome 15s freeze
+        const rawChunks = normalizedText.split(/(?<=[.!?।\n])\s+/).filter(Boolean);
+        const chunks = rawChunks.length > 0 ? rawChunks : [normalizedText];
 
-        const utterance = new SpeechSynthesisUtterance(normalizedText);
-        utterance.lang = getSpeechLangCode(language);
-        utterance.voice = browserVoice;
-        utterance.rate = 0.88; // Relaxed rural kiosk pacing
-        utterance.pitch = 1.05;
+        let chunkIndex = 0;
+        startKeepAlive();
 
-        utterance.onstart = () => {
-          notifySpeechListeners(true);
-        };
-
-        utterance.onend = () => {
-          notifySpeechListeners(false);
-          if (latestDiagnostics.lastAttempt) {
-            latestDiagnostics.lastAttempt.status = 'success';
-            updateDiagnostics();
+        const speakNextChunk = () => {
+          if (speechSequenceId !== currentSeq || chunkIndex >= chunks.length) {
+            stopKeepAlive();
+            notifySpeechListeners(false);
+            if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
+              latestDiagnostics.lastAttempt.status = 'success';
+              updateDiagnostics();
+            }
+            resolve();
+            return;
           }
-          resolve();
+
+          const chunkText = chunks[chunkIndex++];
+          const utterance = new SpeechSynthesisUtterance(chunkText);
+          utterance.lang = getSpeechLangCode(language);
+          utterance.voice = browserVoice;
+          utterance.rate = 0.88; // Relaxed rural kiosk pacing
+          utterance.pitch = 1.05;
+
+          utterance.onstart = () => {
+            if (speechSequenceId === currentSeq) {
+              notifySpeechListeners(true);
+            }
+          };
+
+          utterance.onend = () => {
+            if (speechSequenceId === currentSeq) {
+              speakNextChunk();
+            } else {
+              stopKeepAlive();
+              notifySpeechListeners(false);
+              resolve();
+            }
+          };
+
+          utterance.onerror = (event) => {
+            stopKeepAlive();
+            notifySpeechListeners(false);
+            const errDetail = event.error || 'SpeechSynthesisUtterance error';
+            console.warn('Browser TTS utterance error:', errDetail);
+            if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
+              latestDiagnostics.lastAttempt.status = 'error';
+              latestDiagnostics.lastAttempt.errorDetails = errDetail;
+              updateDiagnostics();
+            }
+            resolve();
+          };
+
+          window.speechSynthesis.speak(utterance);
         };
 
-        utterance.onerror = (event) => {
-          notifySpeechListeners(false);
-          const errDetail = event.error || 'SpeechSynthesisUtterance error';
-          console.warn('Browser TTS utterance error:', errDetail);
-          if (latestDiagnostics.lastAttempt) {
-            latestDiagnostics.lastAttempt.status = 'error';
-            latestDiagnostics.lastAttempt.errorDetails = errDetail;
-            updateDiagnostics();
-          }
-          resolve();
-        };
-
-        window.speechSynthesis.speak(utterance);
+        speakNextChunk();
       } catch (err: any) {
+        stopKeepAlive();
         notifySpeechListeners(false);
         if (latestDiagnostics.lastAttempt) {
           latestDiagnostics.lastAttempt.status = 'error';
@@ -531,8 +683,8 @@ export async function speakText(
   updateDiagnostics();
 
   try {
-    await playAudioUrl(ttsUrl);
-    if (latestDiagnostics.lastAttempt) {
+    await playAudioUrl(ttsUrl, currentSeq);
+    if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
       latestDiagnostics.lastAttempt.status = 'success';
       updateDiagnostics();
     }

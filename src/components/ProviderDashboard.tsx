@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 import {
@@ -76,6 +76,17 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       setNotification(null);
     }, 4000);
   };
+
+  // Screen entrance guidance
+  useEffect(() => {
+    const msg =
+      language === 'te'
+        ? `స్వాగతం ${currentAccount.name || 'ప్రొవైడర్'}. ప్రొవైడర్ డ్యాష్‌బోర్డ్. మీ లభ్యత స్థితిని ఇక్కడ నియంత్రించవచ్చు.`
+        : language === 'hi'
+        ? `स्वागत है ${currentAccount.name || 'प्रदाता'}। प्रदाता डैशबोर्ड। अपनी उपलब्धता स्थिति यहां प्रबंधित करें।`
+        : `Welcome ${currentAccount.name || 'Provider'}. Provider dashboard. Manage your availability status here.`;
+    speakText(msg, language);
+  }, [language, currentAccount.name]);
 
   // Toggle Active / Inactive Status
   const handleToggleStatus = (newStatus: boolean) => {

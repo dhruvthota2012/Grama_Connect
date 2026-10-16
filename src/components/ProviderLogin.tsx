@@ -63,6 +63,19 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
       });
   }, []);
 
+  // Screen entrance guidance
+  useEffect(() => {
+    if (step === 'MOBILE') {
+      const msg =
+        language === 'te'
+          ? 'ప్రొవైడర్ లాగిన్. మీ 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.'
+          : language === 'hi'
+          ? 'प्रदाता लॉगिन। अपना 10 अंकों का मोबाइल नंबर दर्ज करें।'
+          : 'Provider login. Enter your registered 10-digit mobile number.';
+      speakText(msg, language);
+    }
+  }, [step, language]);
+
   // Cooldown countdown timer
   useEffect(() => {
     if (cooldown <= 0) return;

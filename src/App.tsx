@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import './App.css';
 import {
   Language,
@@ -24,7 +24,7 @@ import {
 } from './utils/matchingEngine';
 import { generateReferenceNumber } from './utils/receiptGenerator';
 import { useKioskTimer } from './hooks/useKioskTimer';
-import { setVoiceMuted, getVoiceMuted } from './utils/speechGuidance';
+import { setVoiceMuted, getVoiceMuted, unlockAudioContext } from './utils/speechGuidance';
 
 import { Header } from './components/Header';
 import { IdleWarningModal } from './components/IdleWarningModal';
@@ -58,6 +58,18 @@ export function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('LANGUAGE_SELECT');
   const [screenHistory, setScreenHistory] = useState<Screen[]>([]);
   const [isVoiceMutedState, setIsVoiceMutedState] = useState<boolean>(getVoiceMuted());
+
+  // Synchronise root html lang attribute for scoped language typography
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
+
+  // Unlock audio on initial mount / interaction
+  useEffect(() => {
+    unlockAudioContext();
+  }, []);
 
   // 2. Service Search Workflow State
   const [selectedServiceType, setSelectedServiceType] = useState<MainServiceType>('person');
@@ -559,7 +571,7 @@ export function App() {
   }, [currentScreen, showReceipt]);
 
   return (
-    <div className="kiosk-app-wrapper">
+    <div className={`kiosk-app-wrapper lang-${language}`} data-language={language}>
       {/* Top Header Bar */}
       <Header
         language={language}

@@ -5847,3 +5847,277 @@ header, .kiosk-header {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   PART 2: SCOPED TELUGU TYPOGRAPHY & SPACING FIXES (STRICTLY html[lang="te"])
+   Preserves 100% of English and Hindi styling while ensuring clean line-height,
+   no text clipping, and responsive flexible wrapping in Telugu.
+   ========================================================================== */
+html[lang="te"] {
+  --font-heading: "Noto Sans Telugu", "Baloo 2", "Gautami", "Vani", sans-serif;
+  --font-body: "Noto Sans Telugu", "Noto Sans", "Gautami", "Vani", sans-serif;
+  --font-kiosk: "Noto Sans Telugu", "Noto Sans", "Gautami", "Vani", sans-serif;
+}
+
+html[lang="te"] body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+html[lang="te"] h1,
+html[lang="te"] h2,
+html[lang="te"] h3,
+html[lang="te"] h4,
+html[lang="te"] .brand-title,
+html[lang="te"] .screen-title,
+html[lang="te"] .card-main-title,
+html[lang="te"] .service-card-title,
+html[lang="te"] .hub-card-title {
+  font-family: var(--font-heading);
+  line-height: 1.42;
+  letter-spacing: normal;
+  overflow-wrap: break-word;
+}
+
+/* 1. Header Bar in Telugu */
+html[lang="te"] .brand h2,
+html[lang="te"] .brand-title {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+html[lang="te"] .brand p,
+html[lang="te"] .brand-subtitle {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+html[lang="te"] .btn,
+html[lang="te"] .kiosk-tool-btn,
+html[lang="te"] .replay-voice-btn,
+html[lang="te"] .voice-toggle-btn {
+  font-size: 14.5px;
+  padding: 0 16px;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+html[lang="te"] .tools,
+html[lang="te"] .header-controls {
+  gap: 8px;
+}
+
+/* 2. Hero Banner in Telugu */
+html[lang="te"] .hero,
+html[lang="te"] .agri-hero-banner-container {
+  min-height: 820px;
+  height: auto;
+}
+
+html[lang="te"] .hero.compact-hero,
+html[lang="te"] .agri-hero-banner-container.compact-hero {
+  min-height: 520px;
+  height: auto;
+}
+
+html[lang="te"] .copy,
+html[lang="te"] .agri-hero-header-panel {
+  padding-top: 140px;
+  max-width: 900px;
+}
+
+html[lang="te"] .copy h1,
+html[lang="te"] .agri-hero-headline,
+html[lang="te"] .agri-hero-title {
+  font-size: clamp(30px, 3.2vw, 50px);
+  line-height: 1.42;
+  margin: 16px 0 12px;
+  max-width: 14em;
+  overflow-wrap: break-word;
+}
+
+html[lang="te"] .copy p,
+html[lang="te"] .agri-hero-subheadline,
+html[lang="te"] .agri-hero-sub {
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.65;
+  max-width: 660px;
+}
+
+html[lang="te"] .pills,
+html[lang="te"] .langs,
+html[lang="te"] .hero-lang-chips {
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* 3. Language Selector Tiles in Telugu */
+html[lang="te"] .lang {
+  gap: 14px;
+}
+
+html[lang="te"] .lang h3 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+html[lang="te"] .lang h3 small {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* 4. Home Menu Screen & Choices in Telugu */
+html[lang="te"] .welcome-title {
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.4;
+}
+
+html[lang="te"] .welcome-question {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+html[lang="te"] .voice-guidance-instruction {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+html[lang="te"] .kiosk-menu-card {
+  padding: 32px 32px 36px;
+  min-height: 380px;
+}
+
+html[lang="te"] .kiosk-menu-card .card-details {
+  padding-right: 76px;
+}
+
+html[lang="te"] .kiosk-menu-card .card-main-title {
+  font-size: 28px;
+  line-height: 1.38;
+  margin-bottom: 12px;
+}
+
+html[lang="te"] .kiosk-menu-card .card-desc {
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 100%;
+}
+
+/* 5. Service Selection Cards in Telugu */
+html[lang="te"] .services-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+}
+
+html[lang="te"] .body h3,
+html[lang="te"] .service-card-title {
+  font-size: 24px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+html[lang="te"] .body p,
+html[lang="te"] .service-card-desc {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+html[lang="te"] .tag {
+  font-size: 14px;
+  padding: 6px 14px;
+  line-height: 1.4;
+}
+
+/* 6. Subcategories Grid in Telugu */
+html[lang="te"] .subcategories-grid {
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 24px;
+}
+
+html[lang="te"] .subcat-card {
+  padding: 24px 20px;
+}
+
+html[lang="te"] .subcat-title-primary {
+  font-size: 19px;
+  line-height: 1.4;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  overflow-wrap: break-word;
+}
+
+html[lang="te"] .subcat-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+/* 7. Provider Hub in Telugu */
+html[lang="te"] .provider-hub-grid {
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+html[lang="te"] .hub-card-title {
+  font-size: 22px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  overflow-wrap: break-word;
+}
+
+html[lang="te"] .hub-card-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+html[lang="te"] .hub-tag-badge {
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 5px 12px;
+}
+
+/* 8. Forms, Buttons & Registration in Telugu */
+html[lang="te"] .kiosk-btn-primary,
+html[lang="te"] .kiosk-btn-secondary,
+html[lang="te"] .kiosk-btn-outline {
+  font-size: 17px;
+  line-height: 1.4;
+  padding: 14px 24px;
+  white-space: normal;
+  text-align: center;
+}
+
+html[lang="te"] .form-label,
+html[lang="te"] .kiosk-field-label {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+html[lang="te"] .kiosk-instructions-bar p,
+html[lang="te"] .kiosk-footer-instructions p {
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* 9. Match Results in Telugu */
+html[lang="te"] .match-summary-card h3 {
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+html[lang="te"] .compact-provider-row {
+  padding: 16px 20px;
+}
+
+html[lang="te"] .compact-provider-name {
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+html[lang="te"] .compact-match-reason {
+  font-size: 14px;
+  line-height: 1.5;
+}
+

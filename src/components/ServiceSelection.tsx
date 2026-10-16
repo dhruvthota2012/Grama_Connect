@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, MainServiceType } from '../types';
 import { translations } from '../i18n/translations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
@@ -16,6 +16,17 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 }) => {
   const t = translations[language];
   const [selectedService, setSelectedService] = useState<MainServiceType | null>(null);
+
+  // Screen entrance guidance
+  useEffect(() => {
+    const intro =
+      language === 'te'
+        ? 'మీకు అవసరమైన వ్యవసాయ సేవను ఎంచుకోండి: కూలీలు, ట్రాక్టర్, హార్వెస్టర్ లేదా మినీ ట్రక్.'
+        : language === 'hi'
+        ? 'आवश्यक कृषि सेवा चुनें: श्रमिक, ट्रैक्टर, हार्वेस्टर या मिनी ट्रक परिवहन।'
+        : 'Select the agricultural service you need: workers, tractor, harvester, or mini truck.';
+    speakText(intro, language);
+  }, [language]);
 
   const services: {
     type: MainServiceType;

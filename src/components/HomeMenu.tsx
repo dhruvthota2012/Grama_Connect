@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
@@ -14,6 +14,17 @@ interface HomeMenuProps {
 export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) => {
   const t = translations[language];
   const [selectedOption, setSelectedOption] = useState<'LOOKING_FOR_WORK' | 'NEED_SERVICES' | null>(null);
+
+  // Screen entrance guidance
+  useEffect(() => {
+    const intro =
+      language === 'te'
+        ? 'గ్రామ కనెక్ట్‌కు స్వాగతం. పని కావాలా లేక వ్యవసాయ సేవలు కావాలా? ఒకదాన్ని ఎంచుకోండి.'
+        : language === 'hi'
+        ? 'ग्राम कनेक्ट में आपका स्वागत है। काम चाहिए या कृषि सेवाएं चाहिए? एक विकल्प चुनें।'
+        : 'Welcome to GramaConnect. Choose an option: looking for work, or need agricultural services.';
+    speakText(intro, language);
+  }, [language]);
 
   const getSpokenText = (option: 'LOOKING_FOR_WORK' | 'NEED_SERVICES') => {
     if (option === 'LOOKING_FOR_WORK') {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 import { AgriculturalIllustration } from '../assets/illustrations';
@@ -21,6 +21,17 @@ interface ProviderHubProps {
 export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectAction }) => {
   const t = translations[language];
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
+
+  // Screen entrance guidance
+  useEffect(() => {
+    const intro =
+      language === 'te'
+        ? 'సేవా ప్రదాతల కేంద్రం. కూలీ, ట్రాక్టర్, హార్వెస్టర్ నమోదు లేదా ప్రొవైడర్ లాగిన్ ఎంచుకోండి.'
+        : language === 'hi'
+        ? 'प्रदाता केंद्र। श्रमिक, ट्रैक्टर, हार्वेस्टर पंजीकरण या प्रदाता लॉगिन चुनें।'
+        : 'Provider registration hub. Choose to register worker, tractor, harvester, or provider login.';
+    speakText(intro, language);
+  }, [language]);
 
   const hubOptions: {
     id:

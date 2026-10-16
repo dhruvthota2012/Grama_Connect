@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, MainServiceType, CategoryItem } from '../types';
 import { translations } from '../i18n/translations';
 import { ALL_SUBCATEGORIES } from '../data/categories';
@@ -21,6 +21,19 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
   const t = translations[language];
   const items: CategoryItem[] = ALL_SUBCATEGORIES[serviceType] || [];
   const [selectedSubcatId, setSelectedSubcatId] = useState<string | null>(null);
+
+  // Screen entrance guidance
+  useEffect(() => {
+    const heading =
+      serviceType === 'person'
+        ? (language === 'te' ? 'కూలీల పని రకాన్ని ఎంచుకోండి.' : language === 'hi' ? 'कृषि कार्य का प्रकार चुनें।' : 'Select type of farm work.')
+        : serviceType === 'tractor'
+        ? (language === 'te' ? 'ట్రాక్టర్ పరికరం లేదా పనిని ఎంచుకోండి.' : language === 'hi' ? 'ट्रैक्टर उपकरण या सेवा चुनें।' : 'Select tractor attachment or service.')
+        : serviceType === 'harvester'
+        ? (language === 'te' ? 'పంట కోత హార్వెస్టర్‌ను ఎంచుకోండి.' : language === 'hi' ? 'फसल कटाई हार्वेस्टर चुनें।' : 'Select crop-specific harvester.')
+        : (language === 'te' ? 'రవాణా వాహన రకాన్ని ఎంచుకోండి.' : language === 'hi' ? 'परिवहन वाहन का प्रकार चुनें।' : 'Select transport service type.');
+    speakText(heading, language);
+  }, [language, serviceType]);
 
   const getSpokenText = (item: CategoryItem) => {
     const title = language === 'te' ? item.titleTe : language === 'hi' ? item.titleHi : item.titleEn;
