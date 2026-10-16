@@ -92,7 +92,7 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
             >
               <div className="subcat-card-top">
                 <span className="card-number-badge">{item.number}</span>
-                {isSelected ? (
+                {isSelected && (
                   <div className="card-selected-top-controls">
                     <span className="tap-confirm-badge">{t.tapAgainToOpen}</span>
                     <span
@@ -108,8 +108,6 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
                       <Volume2 size={16} />
                     </span>
                   </div>
-                ) : (
-                  item.number <= 9 && <span className="key-hint">[ KEY {item.number} ]</span>
                 )}
               </div>
 
