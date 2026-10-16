@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import crypto from 'crypto';
-import { applyCors } from '../cors';
+import { applyCors } from '../cors.ts';
 import {
   parseJsonBody,
   sendJson,
@@ -10,7 +10,7 @@ import {
   activeAuthTokens,
   MAX_ATTEMPTS,
   DEMO_TEST_OTP,
-} from '../_authShared';
+} from '../_authShared.ts';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (applyCors(req, res)) return;
@@ -25,6 +25,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const cleanMobile = rawMobile.replace(/\D/g, '').slice(-10);
     const enteredOtp = (body.otp || '').toString().trim();
     const verificationSessionToken = (body.verificationSessionToken || body.sessionToken || '').toString().trim();
+
+    console.log(
+      `[verify-otp] Incoming verification for mobile: ${cleanMobile.slice(0, 3)}****${cleanMobile.slice(-2)} (tokenPresent=${Boolean(verificationSessionToken)})`
+    );
 
     if (!cleanMobile || !enteredOtp) {
       return sendJson(res, 400, {

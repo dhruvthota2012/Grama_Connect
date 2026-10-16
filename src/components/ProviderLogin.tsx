@@ -181,14 +181,23 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
       }
 
       if (!res.ok) {
-        console.error('[OTP Send Error] HTTP', res.status, data || rawText);
+        console.error('[OTP Send Error] HTTP', res.status, 'Body:', data || rawText);
         if (res.status === 404) {
           setErrorMessage(
             language === 'te'
-              ? 'OTP సర్వర్ అందుబాటులో లేదు (404). దయచేసి కాసేపటి తర్వాత ప్రయత్నించండి.'
+              ? 'OTP సర్వర్ అందుబాటులో లేదు (404). API రూట్ అమర్చబడలేదు.'
               : language === 'hi'
-              ? 'OTP सर्वर उपलब्ध नहीं है (404)। कृपया थोड़ी देर बाद प्रयास करें।'
-              : 'OTP service endpoint is unreachable (404). Please check deployment.'
+              ? 'OTP सर्वर उपलब्ध नहीं है (404)। API रूट सेट नहीं है।'
+              : 'OTP service endpoint unreachable (404). Serverless API is not deployed.'
+          );
+        } else if (res.status === 400) {
+          setErrorMessage(
+            data?.message ||
+              (language === 'te'
+                ? 'దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.'
+                : language === 'hi'
+                ? 'कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।'
+                : 'Invalid mobile number. Please check and retry.')
           );
         } else if (res.status === 429) {
           const waitMsg =
@@ -199,19 +208,37 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
               ? 'बहुत सारे प्रयास। कृपया थोड़ी देर प्रतीक्षा करें।'
               : 'Too many requests. Please wait before retrying.');
           setErrorMessage(waitMsg);
-          if (data?.cooldownSeconds) setCooldown(data.cooldownSeconds);
+          const cooldownVal = data?.cooldownRemaining || data?.cooldownSeconds;
+          if (cooldownVal) setCooldown(cooldownVal);
+        } else if (res.status === 502 || res.status === 503 || res.status === 504) {
+          setErrorMessage(
+            language === 'te'
+              ? `గేట్‌వే లోపం (${res.status}). SMS ప్రొవైడర్ లేదా సర్వర్ స్పందించడం లేదు.`
+              : language === 'hi'
+              ? `गेटवे त्रुटि (${res.status})। SMS प्रदाता या सर्वर अनुपलब्ध है।`
+              : `Gateway error (${res.status}). SMS provider or server unreachable.`
+          );
         } else {
-          setErrorMessage(data?.message || `Server error (${res.status}). Please try again.`);
+          setErrorMessage(
+            data?.message || `Server error (${res.status}). ${rawText ? rawText.slice(0, 100) : 'Please try again.'}`
+          );
         }
         setIsLoading(false);
         return;
       }
 
       if (!data || !data.success) {
+        console.error('[OTP Send Error] Unsuccessful response payload:', data);
         setErrorMessage(data?.message || 'Failed to send OTP.');
         setIsLoading(false);
         return;
       }
+
+      console.log('[OTP Send Success]', {
+        provider: data.provider,
+        isSimulated: data.isSimulated,
+        expiresInSeconds: data.expiresInSeconds,
+      });
 
       if (data.sessionToken) {
         setVerificationSessionToken(data.sessionToken);
@@ -234,7 +261,19 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
       );
     } catch (err: any) {
       console.error('[OTP Send Error] Exception:', err);
-      setErrorMessage('Network error while requesting OTP. Please check connection.');
+      const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+      const detailMsg = isOffline
+        ? (language === 'te'
+            ? 'ఇంటర్నెట్ కనెక్షన్ లేదు. దయచేసి నెట్‌వర్క్ తనిఖీ చేయండి.'
+            : language === 'hi'
+            ? 'इंटरनेट कनेक्शन नहीं है। कृपया अपना नेटवर्क जांचें।'
+            : 'No internet connection. Please check your network.')
+        : (language === 'te'
+            ? `కనెక్షన్ లోపం: సర్వర్ స్పందించడం లేదు (${err?.message || 'నెట్‌వర్క్ ఎర్రర్'}).`
+            : language === 'hi'
+            ? `कनेक्शन त्रुटि: सर्वर प्रतिक्रिया नहीं दे रहा (${err?.message || 'नेटवर्क एरर'})।`
+            : `Network error: Server unreachable or CORS blocked (${err?.message || 'Failed to fetch'}).`);
+      setErrorMessage(detailMsg);
     } finally {
       setIsLoading(false);
     }
@@ -288,7 +327,7 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
       }
 
       if (!res.ok) {
-        console.error('[OTP Verify Error] HTTP', res.status, data || rawText);
+        console.error('[OTP Verify Error] HTTP', res.status, 'Body:', data || rawText);
         if (res.status === 404) {
           setErrorMessage(
             language === 'te'
@@ -297,20 +336,41 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
               ? 'सत्यापन सर्वर उपलब्ध नहीं है (404)।'
               : 'Verification endpoint is unreachable (404).'
           );
+        } else if (res.status === 401) {
+          setErrorMessage(
+            data?.message ||
+              (language === 'te'
+                ? 'తప్పు OTP కోడ్ నమోదు చేయబడింది.'
+                : language === 'hi'
+                ? 'गलत सत्यापन कोड दर्ज किया गया।'
+                : 'Incorrect verification code entered.')
+          );
         } else if (res.status === 429) {
-          setErrorMessage(data?.message || 'Too many invalid attempts. Please request a new OTP.');
+          setErrorMessage(
+            data?.message ||
+              (language === 'te'
+                ? 'చాలా తప్పు ప్రయత్నాలు జరిగాయి. దయచేసి కొత్త OTP పంపండి.'
+                : language === 'hi'
+                ? 'बहुत सारे गलत प्रयास। कृपया नया सत्यापन कोड भेजें।'
+                : 'Too many invalid attempts. Please request a new OTP.')
+          );
         } else {
-          setErrorMessage(data?.message || `Verification failed (${res.status}).`);
+          setErrorMessage(
+            data?.message || `Verification failed (${res.status}). ${rawText ? rawText.slice(0, 80) : ''}`
+          );
         }
         setIsLoading(false);
         return;
       }
 
       if (!data || !data.success) {
+        console.error('[OTP Verify Error] Unsuccessful response payload:', data);
         setErrorMessage(data?.message || 'Incorrect verification code.');
         setIsLoading(false);
         return;
       }
+
+      console.log('[OTP Verify Success] Authenticated mobile:', cleanMobile);
 
       // Verification passed! Load existing account or link profile
       let account = getAccountByMobile(cleanMobile);
@@ -343,7 +403,19 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
       onLoginSuccess(account, data.token);
     } catch (err: any) {
       console.error('[OTP Verify Error] Exception:', err);
-      setErrorMessage('Network error during verification. Please try again.');
+      const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+      const detailMsg = isOffline
+        ? (language === 'te'
+            ? 'ఇంటర్నెట్ కనెక్షన్ లేదు. నెట్‌వర్క్ తనిఖీ చేయండి.'
+            : language === 'hi'
+            ? 'इंटरनेट कनेक्शन नहीं है। नेटवर्क जांचें।'
+            : 'No internet connection. Please check your network.')
+        : (language === 'te'
+            ? `ధృవీకరణ నెట్‌వర్క్ లోపం (${err?.message || 'విఫలమైంది'}). సర్వర్ అందుబాటులో లేదు.`
+            : language === 'hi'
+            ? `सत्यापन नेटवर्क त्रुटि (${err?.message || 'विफल'})। सर्वर पहुंच योग्य नहीं है।`
+            : `Network error during verification (${err?.message || 'Failed to fetch'}). Server unreachable.`);
+      setErrorMessage(detailMsg);
     } finally {
       setIsLoading(false);
     }

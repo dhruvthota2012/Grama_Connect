@@ -103,7 +103,10 @@ export function authPlugin(): Plugin {
           return next();
         }
 
-        const parsedUrl = new URL(req.url, 'http://localhost');
+        const baseUrl =
+          process.env.VITE_API_URL ||
+          (req.headers.host ? `http://${req.headers.host}` : 'https://grama-connect-nu.vercel.app');
+        const parsedUrl = new URL(req.url, baseUrl);
         const pathname = parsedUrl.pathname;
 
         // CORS preflight

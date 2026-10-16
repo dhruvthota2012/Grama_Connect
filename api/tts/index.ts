@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { applyCors } from '../cors';
+import { applyCors } from '../cors.ts';
 
 const DEFAULT_VOICES = {
   te: process.env.TTS_VOICE_TE || 'te-IN-Standard-A',
@@ -17,7 +17,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  const parsedUrl = new URL(req.url || '/', 'http://127.0.0.1');
+  const baseUrl =
+    process.env.VITE_API_URL ||
+    (req.headers.host ? `https://${req.headers.host}` : 'https://grama-connect-nu.vercel.app');
+  const parsedUrl = new URL(req.url || '/', baseUrl);
   const text = parsedUrl.searchParams.get('text')?.trim();
   const lang = (parsedUrl.searchParams.get('lang') || 'te').toLowerCase();
 

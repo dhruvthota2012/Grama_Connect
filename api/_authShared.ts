@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import crypto from 'crypto';
-import { applyCors } from './cors';
+import { applyCors } from './cors.ts';
 
 export interface OtpSession {
   mobile: string;
