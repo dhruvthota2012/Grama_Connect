@@ -1,0 +1,339 @@
+import React from 'react';
+import { Language } from '../types';
+import { translations } from '../i18n/translations';
+
+interface AgriculturalHeroBannerProps {
+  language: Language;
+  title?: string;
+  subtitle?: string;
+  compact?: boolean;
+}
+
+/**
+ * AgriculturalHeroBanner — The official GramaConnect village agricultural banner.
+ * Features an authentic Indian village connected by glowing service threads
+ * to agricultural workers, tractors, mini-trucks, and harvesters.
+ */
+export const AgriculturalHeroBanner: React.FC<AgriculturalHeroBannerProps> = ({
+  language,
+  title,
+  subtitle,
+  compact = false,
+}) => {
+  const t = translations[language];
+  const displayTitle = title || t.heroBannerTitle;
+  const displaySub = subtitle || t.heroBannerSub;
+
+  return (
+    <section
+      className={`agri-hero-banner-container ${compact ? 'compact-hero' : ''}`}
+      aria-label="GramaConnect agricultural banner"
+    >
+      {/* 1. Header panel with trilingual copy & Rampur location badge */}
+      <div className="agri-hero-header-panel">
+        <div className="hero-badge-row">
+          <span className="hero-kiosk-pill">
+            <span className="hero-pill-dot" aria-hidden="true" />
+            {language === 'te'
+              ? 'గ్రామీణ వ్యవసాయ వేదిక'
+              : language === 'hi'
+              ? 'ग्रामीण कृषि मंच'
+              : 'Rural Agricultural Hub'}
+          </span>
+          <span className="hero-panchayat-tag">
+            {language === 'te'
+              ? 'రాంపూర్ గ్రామ పంచాయతీ'
+              : language === 'hi'
+              ? 'रामपुर ग्राम पंचायत'
+              : 'Rampur Gram Panchayat'}
+          </span>
+        </div>
+
+        <h2 className="agri-hero-headline agri-hero-title">{displayTitle}</h2>
+        <p className="agri-hero-subheadline agri-hero-sub">{displaySub}</p>
+
+        {/* Trilingual sub-chips */}
+        <div className="hero-lang-chips">
+          <span className="lang-pill" lang="te">
+            రైతులు, కార్మికులు మరియు వ్యవసాయ యంత్రాలను కలుపుతుంది.
+          </span>
+          <span className="lang-pill" lang="hi">
+            किसानों, श्रमिकों और कृषि मशीनरी को जोड़ता है।
+          </span>
+        </div>
+      </div>
+
+      {/* 2. Visual Canvas — The new official animated GramaConnect connected-network illustration */}
+      <div className="agri-hero-art-frame">
+        <svg
+          viewBox="0 0 1600 440"
+          className="agri-landscape-svg"
+          role="img"
+          aria-label="Illustration of a village kiosk connected by a glowing thread to workers, a tractor, a mini-truck and a harvester"
+        >
+          <defs>
+            <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#8CC7C4" />
+              <stop offset="1" stopColor="#B9E0CF" />
+            </linearGradient>
+            <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#6FB58F" />
+              <stop offset="1" stopColor="#A8DAB0" />
+            </linearGradient>
+            <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#7CCB7B" />
+              <stop offset="1" stopColor="#279653" />
+            </linearGradient>
+            <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#F7DE8B" />
+              <stop offset="1" stopColor="#E5B84A" />
+            </linearGradient>
+            <radialGradient id="sun">
+              <stop offset="0" stopColor="#FFF6C9" />
+              <stop offset=".5" stopColor="#FFD96B" />
+              <stop offset="1" stopColor="#FFD96B" stopOpacity="0" />
+            </radialGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <symbol id="pin" viewBox="-20 -48 40 50" overflow="visible">
+              <path d="M0 0C-18-22-18-44 0-44C18-44 18-22 0 0Z" fill="#176B45" stroke="#fff" strokeWidth="3" />
+              <circle cy="-30" r="8" fill="#fff" />
+              <circle cy="-30" r="3.5" fill="#F3C969" />
+            </symbol>
+          </defs>
+
+          {/* Sky, Sun & Rays */}
+          <circle cx="1450" cy="120" r="150" fill="url(#sun)" />
+          <g className="rays" stroke="#FFE08A" strokeWidth="5" strokeLinecap="round" opacity=".7">
+            <path d="M1450 20v-30M1450 220v30M1350 120h-30M1550 120h30M1380 50l-22-22M1520 190l22 22M1380 190l-22 22M1520 50l22-22" />
+          </g>
+          <circle cx="1450" cy="120" r="46" fill="#FFE9A0" />
+
+          {/* Drifting Clouds */}
+          <g className="cloud1" fill="#fff" opacity=".9">
+            <ellipse cx="200" cy="90" rx="70" ry="20" />
+            <ellipse cx="240" cy="75" rx="45" ry="22" />
+            <ellipse cx="160" cy="80" rx="38" ry="16" />
+          </g>
+          <g className="cloud2" fill="#fff" opacity=".8">
+            <ellipse cx="500" cy="150" rx="80" ry="18" />
+            <ellipse cx="540" cy="136" rx="46" ry="20" />
+          </g>
+
+          {/* Flying Birds */}
+          <g className="bird" fill="none" stroke="#2f5d7c" strokeWidth="2.2" strokeLinecap="round">
+            <path d="M980 70q8-9 16 0q8-9 16 0" />
+            <path d="M1030 98q6-7 12 0q6-7 12 0" />
+          </g>
+
+          {/* Rolling Hills Backdrop */}
+          <path
+            d="M0 250L120 205 260 240 420 190 600 245 760 205 900 250 1100 195 1300 245 1460 205 1600 240V270H0Z"
+            fill="url(#hill1)"
+          />
+          <path
+            d="M0 262Q200 220 420 258T860 252T1300 256T1600 245V290H0Z"
+            fill="url(#hill2)"
+          />
+
+          {/* Village Architecture Backdrop */}
+          <g>
+            <path d="M690 252v-34l14-18 14 18v34Z" fill="#E8C9A0" />
+            <path d="M698 218h12l-6-20Z" fill="#C86B3B" />
+            <rect x="725" y="236" width="34" height="18" fill="#FFF3DC" />
+            <path d="M721 238l21-14 21 14Z" fill="#D2603A" />
+            <rect x="850" y="238" width="40" height="16" fill="#FFF3DC" />
+            <path d="M846 240l24-14 24 14Z" fill="#D2603A" />
+            <rect x="905" y="242" width="30" height="12" fill="#FFF3DC" />
+            <path d="M901 244l19-11 19 11Z" fill="#C25A36" />
+            <g fill="#3E9A5E">
+              <circle cx="660" cy="246" r="16" />
+              <circle cx="680" cy="250" r="12" />
+              <circle cx="830" cy="246" r="14" />
+              <circle cx="950" cy="248" r="15" />
+            </g>
+          </g>
+
+          {/* Ground, Farmlands, Soil & Furrows */}
+          <path d="M0 262H1600V440H0Z" fill="url(#grass)" />
+          <path d="M0 296Q300 280 640 300L560 440H0Z" fill="#8A5A3A" />
+          <g stroke="#6F4528" strokeWidth="3" opacity=".55" fill="none">
+            <path d="M0 318Q300 305 600 322" />
+            <path d="M0 346Q290 332 580 350" />
+            <path d="M0 376Q280 362 560 382" />
+            <path d="M0 408Q270 394 545 414" />
+          </g>
+          <path d="M880 266H1600V338Q1250 330 900 336Z" fill="url(#gold)" />
+          <g stroke="#C99A2E" strokeWidth="2" opacity=".5">
+            <path d="M900 285H1600M900 302H1600M900 319H1600" />
+          </g>
+          <path d="M640 346Q1100 322 1600 326V354Q1100 352 600 372Z" fill="#E7D2A6" />
+          <path d="M770 352H830L960 440H640Z" fill="#E7D2A6" />
+          <g stroke="#1B7F46" strokeWidth="3" opacity=".5">
+            <path d="M800 372L690 440M800 372L760 440M800 372L840 440M800 372L910 440M1000 400L1100 440M1100 392L1250 440" />
+          </g>
+
+          {/* 1. Field Workers */}
+          <g transform="translate(560 292)">
+            <g className="bob2">
+              <circle cx="-14" cy="-26" r="7" fill="#7A4A2A" />
+              <path d="M-14 -19 -6 -2 -22 -2Z" fill="#E7F0F7" />
+              <path d="M-28 -2h28" stroke="#1d5a8c" strokeWidth="8" strokeLinecap="round" />
+              <path d="M-8 -14l22 18" stroke="#7A4A2A" strokeWidth="4" strokeLinecap="round" />
+            </g>
+            <g className="bob">
+              <circle cx="26" cy="-22" r="7" fill="#8A5530" />
+              <path d="M26 -15 34 2 18 2Z" fill="#E8B730" />
+              <path d="M12 2h28" stroke="#1d5a8c" strokeWidth="8" strokeLinecap="round" />
+            </g>
+          </g>
+
+          {/* 2. Indian Agricultural Tractor */}
+          <g transform="translate(120 238)">
+            <g className="bob">
+              <rect x="2" y="104" width="52" height="20" rx="4" fill="#D8452F" />
+              <g stroke="#a82e1f" strokeWidth="3">
+                <path d="M10 124v10M24 124v10M38 124v10M50 124v10" />
+              </g>
+              <rect x="72" y="60" width="132" height="44" rx="8" fill="#C8342B" />
+              <rect x="150" y="68" width="66" height="30" rx="6" fill="#B02A22" />
+              <rect x="62" y="12" width="104" height="9" rx="4" fill="#C8342B" />
+              <path d="M72 21V62M160 21V62" stroke="#8d231b" strokeWidth="5" />
+              <rect x="86" y="30" width="46" height="34" rx="4" fill="#EAF6FC" opacity=".55" />
+              <circle cx="110" cy="40" r="8" fill="#7A4A2A" />
+              <path d="M99 62q11-24 22 0Z" fill="#fff" />
+              <rect x="214" y="48" width="8" height="40" rx="3" fill="#333" />
+              <g className="dust" fill="#B58B5E">
+                <circle cx="30" cy="134" r="10" />
+              </g>
+              <circle cx="96" cy="108" r="44" fill="#262626" />
+              <g className="wheel">
+                <circle cx="96" cy="108" r="22" fill="#E3E6E8" />
+                <path d="M96 88v40M76 108h40M82 94l28 28M110 94l-28 28" stroke="#7b8790" strokeWidth="3" />
+              </g>
+              <circle cx="204" cy="122" r="26" fill="#262626" />
+              <g className="wheel">
+                <circle cx="204" cy="122" r="12" fill="#E3E6E8" />
+                <path d="M204 110v24M192 122h24" stroke="#7b8790" strokeWidth="3" />
+              </g>
+            </g>
+          </g>
+
+          {/* 3. Mini-Truck Transport */}
+          <g transform="translate(960 276)">
+            <g className="bob2">
+              <rect x="0" y="12" width="104" height="52" rx="4" fill="#F0B91C" />
+              <path d="M8 12q14-22 28-8t32-10 30 12 8 0Z" fill="#CBA25E" />
+              <rect x="104" y="26" width="54" height="38" rx="6" fill="#1B6FC4" />
+              <path d="M104 26h30l22 18v-18Z" fill="#1B6FC4" />
+              <rect x="116" y="32" width="26" height="18" rx="3" fill="#EAF6FC" />
+              <rect x="0" y="52" width="158" height="14" rx="3" fill="#174A8B" />
+              <circle cx="30" cy="68" r="16" fill="#262626" />
+              <g className="wheel">
+                <circle cx="30" cy="68" r="7" fill="#dfe5e9" />
+                <path d="M30 61v14M23 68h14" stroke="#7b8790" strokeWidth="2" />
+              </g>
+              <circle cx="128" cy="68" r="16" fill="#262626" />
+              <g className="wheel">
+                <circle cx="128" cy="68" r="7" fill="#dfe5e9" />
+                <path d="M128 61v14M121 68h14" stroke="#7b8790" strokeWidth="2" />
+              </g>
+            </g>
+          </g>
+
+          {/* 4. Combine Harvester */}
+          <g transform="translate(1250 244)">
+            <g className="bob">
+              <rect x="40" y="20" width="150" height="50" rx="6" fill="#F0B91C" />
+              <rect x="64" y="0" width="64" height="40" rx="5" fill="#F7CE4F" />
+              <rect x="72" y="7" width="48" height="26" rx="3" fill="#EAF6FC" opacity=".8" />
+              <circle cx="96" cy="22" r="6" fill="#7A4A2A" />
+              <path d="M150 20h38v-12h-38Z" fill="#D69F12" />
+              <rect x="0" y="52" width="46" height="30" rx="4" fill="#D69F12" />
+              <g className="reel">
+                <circle cx="18" cy="42" r="20" fill="none" stroke="#B87F0C" strokeWidth="5" strokeDasharray="8 6" />
+              </g>
+              <rect x="-6" y="78" width="70" height="8" rx="3" fill="#8f6a10" />
+              <g stroke="#8f6a10" strokeWidth="3">
+                <path d="M0 86v8M12 86v8M24 86v8M36 86v8M48 86v8M60 86v8" />
+              </g>
+              <circle cx="84" cy="78" r="22" fill="#262626" />
+              <g className="wheel">
+                <circle cx="84" cy="78" r="9" fill="#dfe5e9" />
+                <path d="M84 69v18M75 78h18" stroke="#7b8790" strokeWidth="2" />
+              </g>
+              <circle cx="160" cy="84" r="16" fill="#262626" />
+              <g className="wheel">
+                <circle cx="160" cy="84" r="7" fill="#dfe5e9" />
+                <path d="M160 77v14M153 84h14" stroke="#7b8790" strokeWidth="2" />
+              </g>
+            </g>
+          </g>
+
+          {/* 5. Village Kiosk Hub */}
+          <g transform="translate(800 340)">
+            <ellipse cx="0" cy="2" rx="46" ry="8" fill="#000" opacity=".15" />
+            <rect x="-30" y="-100" width="60" height="100" rx="6" fill="#174A8B" />
+            <path d="M-40 -100H40L32 -116H-32Z" fill="#F3C969" />
+            <rect x="-22" y="-86" width="44" height="44" rx="4" fill="#EAF6FC" />
+            <path d="M0 -50V-64M0 -58q-9-3-10-12 9 0 10 12M0 -58q9-3 10-12-9 0-10 12" stroke="#279653" fill="#43B55A" strokeWidth="2" />
+            <rect x="-18" y="-34" width="36" height="8" rx="3" fill="#43B5E8" />
+            <rect x="-18" y="-20" width="36" height="8" rx="3" fill="#DDF3DF" />
+            <path d="M0 -116V-135" stroke="#174A8B" strokeWidth="4" />
+          </g>
+
+          {/* 6. Glowing Connected Digital Thread */}
+          <g fill="none" strokeLinecap="round">
+            <g stroke="#fff" strokeWidth="4" opacity=".9" filter="url(#glow)">
+              <path className="flow" d="M800 205Q680 110 560 232" />
+              <path className="flow" d="M800 205Q560 60 290 208" />
+              <path className="flow" d="M800 205Q920 110 1040 222" />
+              <path className="flow" d="M800 205Q1120 50 1380 202" />
+            </g>
+          </g>
+          <g fill="#F3C969" stroke="#fff" strokeWidth="2">
+            <circle r="6"><animateMotion dur="3.6s" repeatCount="indefinite" path="M800 205Q680 110 560 232" /></circle>
+            <circle r="6"><animateMotion dur="4.8s" repeatCount="indefinite" begin="-1.2s" path="M800 205Q560 60 290 208" /></circle>
+            <circle r="6"><animateMotion dur="3.6s" repeatCount="indefinite" begin="-2s" path="M800 205Q920 110 1040 222" /></circle>
+            <circle r="6"><animateMotion dur="5.2s" repeatCount="indefinite" begin="-.6s" path="M800 205Q1120 50 1380 202" /></circle>
+          </g>
+
+          {/* Signal Rings */}
+          <g transform="translate(800 205)" fill="none" stroke="#fff" strokeWidth="3">
+            <circle className="ring" r="28" />
+            <circle className="ring" r="28" />
+            <circle className="ring" r="28" />
+          </g>
+
+          {/* Location Pins */}
+          <use className="pin" href="#pin" x="540" y="232" width="40" height="50" transform="translate(0 30)" />
+          <use className="pin" href="#pin" x="270" y="208" width="40" height="50" transform="translate(0 30)" />
+          <use className="pin" href="#pin" x="1020" y="222" width="40" height="50" transform="translate(0 30)" />
+          <use className="pin" href="#pin" x="1360" y="202" width="40" height="50" transform="translate(0 30)" />
+
+          {/* Crop Tufts Swaying Foreground */}
+          <g fill="#1B7F46" stroke="#176B45" strokeWidth="1">
+            <g id="tufts">
+              <path className="sway" d="M640 440q4-34 -2-52q12 20 10 52Z" />
+              <path className="sway" d="M700 440q4-30 0-46q10 18 8 46Z" />
+              <path className="sway" d="M1010 440q4-34-2-52q12 20 10 52Z" />
+              <path className="sway" d="M1080 440q4-30 0-46q10 18 8 46Z" />
+              <path className="sway" d="M1180 440q4-34-2-52q12 20 10 52Z" />
+              <path className="sway" d="M1290 440q4-30 0-46q10 18 8 46Z" />
+              <path className="sway" d="M1400 440q4-34-2-52q12 20 10 52Z" />
+              <path className="sway" d="M1500 440q4-30 0-46q10 18 8 46Z" />
+            </g>
+          </g>
+          <path d="M0 440V380Q40 400 70 440Z" fill="#176B45" />
+          <path d="M0 440V345Q60 380 110 440Z" fill="#279653" opacity=".85" />
+          <path d="M1600 440V370Q1560 395 1530 440Z" fill="#176B45" />
+        </svg>
+      </div>
+    </section>
+  );
+};

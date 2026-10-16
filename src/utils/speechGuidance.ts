@@ -1,0 +1,610 @@
+import { Language } from '../types';
+
+export interface SpeechDiagnostics {
+  isSpeechSynthesisAvailable: boolean;
+  voicesCount: number;
+  hasTeluguVoice: boolean;
+  hasHindiVoice: boolean;
+  hasEnglishVoice: boolean;
+  availableVoices: {
+    en: string[];
+    te: string[];
+    hi: string[];
+  };
+  serverTtsStatus: {
+    configured: boolean;
+    provider: string;
+    apiKeyConfigured: boolean;
+    checked: boolean;
+  };
+  lastAttempt?: {
+    text: string;
+    lang: Language;
+    engine: 'browser_speech_api' | 'google_cloud_tts' | 'pre_generated_file' | 'dev_audio_stream' | 'none';
+    voiceName: string;
+    status: 'idle' | 'loading' | 'playing' | 'success' | 'error';
+    errorDetails?: string;
+    timestamp: number;
+  };
+}
+
+export interface TestPhraseResult {
+  success: boolean;
+  language: Language;
+  phrase: string;
+  engine: string;
+  voice: string;
+  source: 'browser' | 'cloud' | 'pre_generated' | 'none';
+  error?: string;
+}
+
+export interface ServerTtsStatus {
+  status: string;
+  configured: boolean;
+  provider: string;
+  apiKeyConfigured: boolean;
+  voices: {
+    te: string;
+    hi: string;
+    en: string;
+  };
+  hasPreGeneratedAudio: boolean;
+}
+
+let isVoiceMuted = false;
+let lastSpokenText: string | null = null;
+let lastSpokenLang: Language = 'te';
+let isSpeakingNow = false;
+
+// Audio player instance for pre-recorded / cloud audio
+let activeAudioElement: HTMLAudioElement | null = null;
+
+// Speech synthesis voice cache
+let cachedVoices: SpeechSynthesisVoice[] = [];
+
+// Listeners
+const speechListeners = new Set<(speaking: boolean) => void>();
+const diagnosticListeners = new Set<(d: SpeechDiagnostics) => void>();
+
+// Server status state
+let serverTtsStatusState = {
+  configured: false,
+  provider: 'unknown',
+  apiKeyConfigured: false,
+  checked: false,
+};
+
+// Diagnostic state
+let latestDiagnostics: SpeechDiagnostics = {
+  isSpeechSynthesisAvailable: typeof window !== 'undefined' && 'speechSynthesis' in window,
+  voicesCount: 0,
+  hasTeluguVoice: false,
+  hasHindiVoice: false,
+  hasEnglishVoice: false,
+  availableVoices: { en: [], te: [], hi: [] },
+  serverTtsStatus: serverTtsStatusState,
+};
+
+// Pre-recorded audio map
+const PRE_RECORDED_AUDIO: Record<Language, Record<string, string>> = {
+  te: {
+    'గ్రామ కనెక్ట్కు స్వాగతం.': '/audio/te/welcome.mp3',
+    'భాష ఎంపిక చేయబడింది: తెలుగు. గ్రామకనెక్ట్‌కి స్వాగతం.': '/audio/te/lang_selected.mp3',
+    'నాకు పని కావాలి లేదా యంత్రాలను నమోదు చేయాలి': '/audio/te/menu_work.mp3',
+    'నాకు వ్యవసాయ సేవలు కావాలి. కూలీలు, ట్రాక్టర్, హార్వెస్టర్ మరియు రవాణా': '/audio/te/menu_services.mp3',
+    'తెరిచేందుకు మరోసారి నొక్కండి': '/audio/te/two_tap_hint.mp3',
+    'వ్యవసాయ కూలీలు. విత్తనాలు, నాట్లు, కలుపు మరియు కోత పనులకు కూలీలు': '/audio/te/cat_person.mp3',
+    'ట్రాక్టర్ మరియు వ్యవసాయ పరికరాలు. నాగలి, రోటవేటర్, గొర్రు మరియు ట్రాలీ': '/audio/te/cat_tractor.mp3',
+    'పంట కోత హార్వెస్టర్ సేవలు. వరి, మొక్కజొన్న మరియు గోధుమ కోత యంత్రాలు': '/audio/te/cat_harvester.mp3',
+    'మినీ ట్రక్ రవాణా. మార్కెట్ లేదా మిల్లుకు పంట ఉత్పత్తుల రవాణా': '/audio/te/cat_truck.mp3',
+    'వ్యవసాయ కూలీగా నమోదు చేసుకోండి': '/audio/te/hub_worker.mp3',
+    'మీ ట్రాక్టర్ వివరాలను నమోదు చేయండి': '/audio/te/hub_tractor.mp3',
+    'హార్వెస్టర్ సేవలను నమోదు చేయండి': '/audio/te/hub_harvester.mp3',
+    'మినీ ట్రక్ రవాణా సేవలను నమోదు చేయండి': '/audio/te/hub_truck.mp3',
+  },
+  hi: {
+    'ग्राम कनेक्ट में आपका स्वागत है।': '/audio/hi/welcome.mp3',
+    'भाषा चुनी गई: हिन्दी। ग्रामकनेक्ट में आपका स्वागत है।': '/audio/hi/lang_selected.mp3',
+    'मुझे काम चाहिए या मशीनरी पंजीकृत करनी है': '/audio/hi/menu_work.mp3',
+    'मुझे कृषि सेवाएं चाहिए। श्रमिक, ट्रैक्टर, हार्वेस्टर या परिवहन': '/audio/hi/menu_services.mp3',
+    'खोलने के लिए दोबारा टैप करें': '/audio/hi/two_tap_hint.mp3',
+  },
+  en: {
+    'welcome to gramaconnect.': '/audio/en/welcome.mp3',
+    'language selected: english. welcome to gramaconnect.': '/audio/en/lang_selected.mp3',
+    'i am looking for work or registering machinery': '/audio/en/menu_work.mp3',
+    'i need agricultural services. workers, tractor, harvester, or transport': '/audio/en/menu_services.mp3',
+    'tap again to open': '/audio/en/two_tap_hint.mp3',
+  },
+};
+
+/**
+ * Initializes voice listeners and loads browser voices asynchronously.
+ */
+function initVoices() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return;
+  }
+
+  const load = () => {
+    try {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        cachedVoices = voices;
+        updateDiagnostics();
+      }
+    } catch (e) {
+      console.warn('Error loading speech voices:', e);
+    }
+  };
+
+  load();
+
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = load;
+  }
+}
+
+// Initialise on script load
+if (typeof window !== 'undefined') {
+  initVoices();
+  // Check server status after small tick
+  setTimeout(checkServerTtsStatus, 100);
+}
+
+/**
+ * Checks server TTS endpoint status.
+ */
+export async function checkServerTtsStatus(): Promise<ServerTtsStatus | null> {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const res = await fetch('/api/tts/status');
+    if (res.ok) {
+      const data = (await res.json()) as ServerTtsStatus;
+      serverTtsStatusState = {
+        configured: data.configured,
+        provider: data.provider,
+        apiKeyConfigured: data.apiKeyConfigured,
+        checked: true,
+      };
+      updateDiagnostics();
+      return data;
+    }
+  } catch (e) {
+    serverTtsStatusState.checked = true;
+    updateDiagnostics();
+  }
+  return null;
+}
+
+/**
+ * Computes diagnostic state without notifying listeners.
+ */
+function computeDiagnostics(): SpeechDiagnostics {
+  const isAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  const voices = cachedVoices.length > 0 ? cachedVoices : (isAvailable ? window.speechSynthesis.getVoices() : []);
+
+  const teVoices = voices.filter((v) => v.lang.toLowerCase().startsWith('te')).map((v) => `${v.name} (${v.lang})`);
+  const hiVoices = voices.filter((v) => v.lang.toLowerCase().startsWith('hi')).map((v) => `${v.name} (${v.lang})`);
+  const enVoices = voices.filter((v) => v.lang.toLowerCase().startsWith('en')).map((v) => `${v.name} (${v.lang})`);
+
+  latestDiagnostics = {
+    isSpeechSynthesisAvailable: isAvailable,
+    voicesCount: voices.length,
+    hasTeluguVoice: teVoices.length > 0,
+    hasHindiVoice: hiVoices.length > 0,
+    hasEnglishVoice: enVoices.length > 0,
+    availableVoices: {
+      te: teVoices,
+      hi: hiVoices,
+      en: enVoices,
+    },
+    serverTtsStatus: serverTtsStatusState,
+    lastAttempt: latestDiagnostics.lastAttempt,
+  };
+
+  return latestDiagnostics;
+}
+
+/**
+ * Updates diagnostic state and notifies subscribers.
+ */
+function updateDiagnostics() {
+  const diag = computeDiagnostics();
+  diagnosticListeners.forEach((cb) => {
+    try {
+      cb(diag);
+    } catch (e) {
+      console.warn('Diagnostic listener error:', e);
+    }
+  });
+}
+
+export function getSpeechDiagnostics(): SpeechDiagnostics {
+  return computeDiagnostics();
+}
+
+export function subscribeDiagnostics(callback: (d: SpeechDiagnostics) => void): () => void {
+  diagnosticListeners.add(callback);
+  return () => {
+    diagnosticListeners.delete(callback);
+  };
+}
+
+export function subscribeSpeechState(callback: (speaking: boolean) => void): () => void {
+  speechListeners.add(callback);
+  callback(isSpeakingNow);
+  return () => {
+    speechListeners.delete(callback);
+  };
+}
+
+function notifySpeechListeners(speaking: boolean) {
+  isSpeakingNow = speaking;
+  speechListeners.forEach((cb) => {
+    try {
+      cb(speaking);
+    } catch (e) {
+      console.warn('Speech listener error:', e);
+    }
+  });
+}
+
+export function setVoiceMuted(muted: boolean) {
+  isVoiceMuted = muted;
+  if (muted) {
+    cancelSpeech();
+  }
+}
+
+export function getVoiceMuted(): boolean {
+  return isVoiceMuted;
+}
+
+/**
+ * Cancels all speech: stops both browser speechSynthesis and any playing HTMLAudioElement.
+ */
+export function cancelSpeech() {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  if (activeAudioElement) {
+    try {
+      activeAudioElement.pause();
+      activeAudioElement.currentTime = 0;
+      activeAudioElement = null;
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  notifySpeechListeners(false);
+}
+
+/**
+ * Maps application Language to the standard BCP-47 speech language code.
+ */
+export function getSpeechLangCode(language: Language): string {
+  switch (language) {
+    case 'te':
+      return 'te-IN';
+    case 'hi':
+      return 'hi-IN';
+    case 'en':
+    default:
+      return 'en-IN';
+  }
+}
+
+/**
+ * Checks if the browser has an authentic installed voice for the given language.
+ * Strictly checks for language prefix (te, hi, en) and NEVER returns true for
+ * an English voice when Telugu or Hindi is requested.
+ */
+export function hasBrowserVoice(language: Language): boolean {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return false;
+  }
+
+  const voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return false;
+
+  const targetPrefix = language === 'te' ? 'te' : language === 'hi' ? 'hi' : 'en';
+  return voices.some((v) => v.lang.toLowerCase().startsWith(targetPrefix));
+}
+
+/**
+ * Finds the best matching voice for a given language, prioritizing female voices.
+ * Returns undefined if no voice for that specific language prefix is installed.
+ * NEVER returns an English voice for Telugu or Hindi!
+ */
+export function findBestVoice(language: Language): SpeechSynthesisVoice | undefined {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return undefined;
+  }
+
+  const voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return undefined;
+
+  const targetPrefix = language === 'te' ? 'te' : language === 'hi' ? 'hi' : 'en';
+  const langVoices = voices.filter((v) => v.lang.toLowerCase().startsWith(targetPrefix));
+
+  if (langVoices.length === 0) {
+    return undefined;
+  }
+
+  const femaleKeywords = [
+    'female',
+    'woman',
+    'swara',
+    'kalpana',
+    'geeta',
+    'heera',
+    'priya',
+    'neerja',
+    'chitra',
+    'shruti',
+    'veena',
+    'zira',
+    'aria',
+    'jenny',
+    'google हिन्दी',
+    'google te-in',
+    'google hi-in',
+    'google',
+  ];
+
+  const preferredFemaleVoice = langVoices.find((v) => {
+    const name = v.name.toLowerCase();
+    return femaleKeywords.some((kw) => name.includes(kw));
+  });
+
+  return preferredFemaleVoice || langVoices[0];
+}
+
+/**
+ * Plays audio through an HTMLAudioElement.
+ */
+function playAudioUrl(url: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    cancelSpeech();
+
+    const audio = new Audio(url);
+    activeAudioElement = audio;
+
+    audio.onplay = () => {
+      notifySpeechListeners(true);
+    };
+
+    audio.onended = () => {
+      notifySpeechListeners(false);
+      activeAudioElement = null;
+      resolve();
+    };
+
+    audio.onerror = () => {
+      notifySpeechListeners(false);
+      activeAudioElement = null;
+      reject(new Error(`Audio playback error: ${audio.error ? audio.error.message : 'Unknown'}`));
+    };
+
+    audio.play().catch((err) => {
+      notifySpeechListeners(false);
+      activeAudioElement = null;
+      reject(err);
+    });
+  });
+}
+
+/**
+ * Speaks text using the best available engine:
+ * 1. Pre-generated audio file (if text matches fixed kiosk phrases)
+ * 2. Browser SpeechSynthesis (if authentic voice for that language is installed)
+ * 3. Server Cloud TTS fallback (/api/tts)
+ */
+export async function speakText(
+  text: string,
+  language: Language,
+  options?: { forceEngine?: 'browser' | 'cloud' | 'auto' }
+): Promise<void> {
+  if (!text || isVoiceMuted) {
+    return;
+  }
+
+  lastSpokenText = text;
+  lastSpokenLang = language;
+
+  const normalizedText = text.trim();
+  const lowerText = normalizedText.toLowerCase();
+  const forceEngine = options?.forceEngine || 'auto';
+
+  // 1. Check for Pre-generated Audio File (Instant zero-latency audio)
+  if (forceEngine !== 'browser') {
+    const preRecordedMap = PRE_RECORDED_AUDIO[language];
+    const preRecordedPath = preRecordedMap?.[normalizedText] || preRecordedMap?.[lowerText];
+
+    if (preRecordedPath) {
+      latestDiagnostics.lastAttempt = {
+        text: normalizedText,
+        lang: language,
+        engine: 'pre_generated_file',
+        voiceName: `Pre-Recorded High-Fidelity (${language})`,
+        status: 'playing',
+        timestamp: Date.now(),
+      };
+      updateDiagnostics();
+
+      try {
+        await playAudioUrl(preRecordedPath);
+        if (latestDiagnostics.lastAttempt) {
+          latestDiagnostics.lastAttempt.status = 'success';
+          updateDiagnostics();
+        }
+        return;
+      } catch (e) {
+        console.warn('Pre-generated audio failed, falling back to synthesis:', e);
+      }
+    }
+  }
+
+  // 2. Check if Browser has an authentic voice for this language
+  const browserVoice = findBestVoice(language);
+
+  if (forceEngine !== 'cloud' && browserVoice) {
+    // Authentic voice exists in the browser!
+    latestDiagnostics.lastAttempt = {
+      text: normalizedText,
+      lang: language,
+      engine: 'browser_speech_api',
+      voiceName: `${browserVoice.name} (${browserVoice.lang})`,
+      status: 'playing',
+      timestamp: Date.now(),
+    };
+    updateDiagnostics();
+
+    return new Promise((resolve) => {
+      try {
+        cancelSpeech();
+
+        const utterance = new SpeechSynthesisUtterance(normalizedText);
+        utterance.lang = getSpeechLangCode(language);
+        utterance.voice = browserVoice;
+        utterance.rate = 0.88; // Relaxed rural kiosk pacing
+        utterance.pitch = 1.05;
+
+        utterance.onstart = () => {
+          notifySpeechListeners(true);
+        };
+
+        utterance.onend = () => {
+          notifySpeechListeners(false);
+          if (latestDiagnostics.lastAttempt) {
+            latestDiagnostics.lastAttempt.status = 'success';
+            updateDiagnostics();
+          }
+          resolve();
+        };
+
+        utterance.onerror = (event) => {
+          notifySpeechListeners(false);
+          const errDetail = event.error || 'SpeechSynthesisUtterance error';
+          console.warn('Browser TTS utterance error:', errDetail);
+          if (latestDiagnostics.lastAttempt) {
+            latestDiagnostics.lastAttempt.status = 'error';
+            latestDiagnostics.lastAttempt.errorDetails = errDetail;
+            updateDiagnostics();
+          }
+          resolve();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch (err: any) {
+        notifySpeechListeners(false);
+        if (latestDiagnostics.lastAttempt) {
+          latestDiagnostics.lastAttempt.status = 'error';
+          latestDiagnostics.lastAttempt.errorDetails = err?.message || String(err);
+          updateDiagnostics();
+        }
+        resolve();
+      }
+    });
+  }
+
+  // 3. Fallback: Browser lacks authentic voice (Typical for Telugu in desktop Chrome/Windows)
+  // Request Server TTS endpoint /api/tts
+  const ttsUrl = `/api/tts?text=${encodeURIComponent(normalizedText)}&lang=${language}`;
+
+  latestDiagnostics.lastAttempt = {
+    text: normalizedText,
+    lang: language,
+    engine: 'google_cloud_tts',
+    voiceName: language === 'te' ? 'te-IN-Standard-A' : language === 'hi' ? 'hi-IN-Standard-A' : 'en-IN-Standard-A',
+    status: 'loading',
+    timestamp: Date.now(),
+  };
+  updateDiagnostics();
+
+  try {
+    await playAudioUrl(ttsUrl);
+    if (latestDiagnostics.lastAttempt) {
+      latestDiagnostics.lastAttempt.status = 'success';
+      updateDiagnostics();
+    }
+  } catch (err: any) {
+    console.error(`[TTS Fallback Error for ${language}]:`, err);
+    if (latestDiagnostics.lastAttempt) {
+      latestDiagnostics.lastAttempt.status = 'error';
+      latestDiagnostics.lastAttempt.errorDetails =
+        err?.message ||
+        `No native browser voice for "${language}" and cloud TTS fallback audio could not be played.`;
+      updateDiagnostics();
+    }
+  }
+}
+
+/**
+ * Replays the last spoken announcement on user demand.
+ */
+export function replaySpeech() {
+  if (lastSpokenText) {
+    speakText(lastSpokenText, lastSpokenLang);
+  }
+}
+
+/**
+ * Test button execution specifically testing English, Telugu, or Hindi.
+ */
+export async function testSpeechPhrase(language: Language): Promise<TestPhraseResult> {
+  const testPhrases: Record<Language, string> = {
+    en: 'Welcome to GramaConnect.',
+    te: 'గ్రామ కనెక్ట్కు స్వాగతం.',
+    hi: 'ग्राम कनेक्ट में आपका स्वागत है।',
+  };
+
+  const phrase = testPhrases[language];
+  const browserVoice = findBestVoice(language);
+  const preRecordedMap = PRE_RECORDED_AUDIO[language];
+  const hasPreRecorded = Boolean(preRecordedMap?.[phrase]);
+
+  let expectedSource: 'browser' | 'cloud' | 'pre_generated' = 'cloud';
+  let engineName = 'Google Cloud TTS (/api/tts)';
+  let voiceName = language === 'te' ? 'te-IN-Standard-A' : language === 'hi' ? 'hi-IN-Standard-A' : 'en-IN-Standard-A';
+
+  if (hasPreRecorded) {
+    expectedSource = 'pre_generated';
+    engineName = 'Pre-Recorded High-Fidelity Audio File';
+    voiceName = `Native Spoken (${language === 'te' ? 'Telugu' : language === 'hi' ? 'Hindi' : 'English'})`;
+  } else if (browserVoice) {
+    expectedSource = 'browser';
+    engineName = 'Browser Web Speech API';
+    voiceName = `${browserVoice.name} (${browserVoice.lang})`;
+  }
+
+  try {
+    await speakText(phrase, language);
+    return {
+      success: true,
+      language,
+      phrase,
+      engine: latestDiagnostics.lastAttempt?.engine || engineName,
+      voice: latestDiagnostics.lastAttempt?.voiceName || voiceName,
+      source: expectedSource,
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      language,
+      phrase,
+      engine: engineName,
+      voice: voiceName,
+      source: expectedSource,
+      error: err?.message || 'Speech playback failed',
+    };
+  }
+}
