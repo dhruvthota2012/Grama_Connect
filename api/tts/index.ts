@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { applyCors } from '../cors.ts';
+import { applyCors } from '../cors.js';
 
 const DEFAULT_VOICES = {
   te: process.env.TTS_VOICE_TE || 'te-IN-Standard-A',

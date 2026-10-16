@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import crypto from 'crypto';
-import { applyCors } from '../cors.ts';
+import { applyCors } from '../cors.js';
 import {
   parseJsonBody,
   sendJson,
@@ -14,7 +14,7 @@ import {
   RATE_LIMIT_WINDOW_MS,
   MAX_REQUESTS_PER_WINDOW,
   DEMO_TEST_OTP,
-} from '../_authShared.ts';
+} from '../_authShared.js';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (applyCors(req, res)) return;

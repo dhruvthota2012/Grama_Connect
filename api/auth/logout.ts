@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { applyCors } from '../cors.ts';
-import { parseJsonBody, sendJson, activeAuthTokens } from '../_authShared.ts';
+import { applyCors } from '../cors.js';
+import { parseJsonBody, sendJson, activeAuthTokens } from '../_authShared.js';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (applyCors(req, res)) return;
