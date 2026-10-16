@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 import { AgriculturalIllustration } from '../assets/illustrations';
@@ -21,6 +21,7 @@ interface ProviderHubProps {
 export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectAction }) => {
   const t = translations[language];
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  const armedActionRef = useRef<string | null>(null);
 
   // Screen entrance guidance
   useEffect(() => {
@@ -145,13 +146,16 @@ export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectActi
     const opt = hubOptions.find((o) => o.id === action);
     if (!opt) return;
 
-    if (selectedAction === action) {
+    if (armedActionRef.current === action) {
       // Second tap: open screen
       onSelectAction(action);
     } else {
-      // First tap: highlight and announce
+      // First tap: highlight and announce immediately
+      armedActionRef.current = action;
       setSelectedAction(action);
-      speakText(getSpokenText(opt), language);
+      speakText(getSpokenText(opt), language).catch((err) =>
+        console.warn('[Speech Notice]:', err?.message || err)
+      );
     }
   };
 

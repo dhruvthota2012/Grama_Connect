@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language, MainServiceType } from '../types';
 import { translations } from '../i18n/translations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
@@ -16,6 +16,7 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 }) => {
   const t = translations[language];
   const [selectedService, setSelectedService] = useState<MainServiceType | null>(null);
+  const armedServiceRef = useRef<MainServiceType | null>(null);
 
   // Screen entrance guidance
   useEffect(() => {
@@ -105,13 +106,16 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
     const svc = services.find((s) => s.type === serviceType);
     if (!svc) return;
 
-    if (selectedService === serviceType) {
+    if (armedServiceRef.current === serviceType) {
       // Second tap: Open subcategory screen
       onSelectService(serviceType);
     } else {
-      // First tap: Highlight and speak
+      // First tap: Highlight and speak immediately
+      armedServiceRef.current = serviceType;
       setSelectedService(serviceType);
-      speakText(getSpokenText(svc), language);
+      speakText(getSpokenText(svc), language).catch((err) =>
+        console.warn('[Speech Notice]:', err?.message || err)
+      );
     }
   };
 

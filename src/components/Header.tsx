@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language, Screen } from '../types';
 import { translations } from '../i18n/translations';
 import { Home, ArrowLeft, RotateCcw, Volume2, VolumeX, Radio, KeyRound, UserCheck } from 'lucide-react';
@@ -35,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const t = translations[language];
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const headerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeSpeechState((speaking) => {
@@ -43,8 +44,44 @@ export const Header: React.FC<HeaderProps> = ({
     return unsubscribe;
   }, []);
 
+  // Measure live header height and update --chrome-h CSS variable
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    const measureHeight = () => {
+      if (headerRef.current) {
+        const height = Math.ceil(headerRef.current.getBoundingClientRect().height);
+        if (height > 0) {
+          document.documentElement.style.setProperty('--chrome-h', `${height}px`);
+        }
+      }
+    };
+
+    measureHeight();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        measureHeight();
+      });
+      ro.observe(el);
+    }
+
+    window.addEventListener('resize', measureHeight);
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', measureHeight);
+    };
+  }, [currentScreen, language]);
+
+  const isInnerScreen = currentScreen !== 'LANGUAGE_SELECT' && currentScreen !== 'HOME_MENU';
+
   return (
-    <header className="kiosk-header">
+    <header
+      ref={headerRef}
+      className={`kiosk-header ${isInnerScreen ? 'has-inner-nav' : ''}`}
+    >
       <div className="shell">
         {/* Floating Glass Header Bar */}
         <div className="bar header-top-row">
@@ -143,7 +180,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Navigation Sub-Bar (When inside workflows) */}
-        {currentScreen !== 'LANGUAGE_SELECT' && currentScreen !== 'HOME_MENU' && (
+        {isInnerScreen && (
           <div className="header-nav-row inner-nav-bar">
             <div className="nav-left">
               {canGoBack && (

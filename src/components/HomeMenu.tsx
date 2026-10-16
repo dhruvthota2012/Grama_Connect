@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
@@ -14,6 +14,7 @@ interface HomeMenuProps {
 export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) => {
   const t = translations[language];
   const [selectedOption, setSelectedOption] = useState<'LOOKING_FOR_WORK' | 'NEED_SERVICES' | null>(null);
+  const armedOptionRef = useRef<'LOOKING_FOR_WORK' | 'NEED_SERVICES' | null>(null);
 
   // Screen entrance guidance
   useEffect(() => {
@@ -43,13 +44,16 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
   };
 
   const handleCardClick = (option: 'LOOKING_FOR_WORK' | 'NEED_SERVICES') => {
-    if (selectedOption === option) {
+    if (armedOptionRef.current === option) {
       // Second tap: open screen
       onSelectOption(option);
     } else {
-      // First tap: highlight and announce voice
+      // First tap: highlight and announce voice immediately
+      armedOptionRef.current = option;
       setSelectedOption(option);
-      speakText(getSpokenText(option), language);
+      speakText(getSpokenText(option), language).catch((err) =>
+        console.warn('[Speech Notice]:', err?.message || err)
+      );
     }
   };
 

@@ -135,11 +135,7 @@ export function unlockAudioContext(): void {
   if ('speechSynthesis' in window) {
     try {
       window.speechSynthesis.resume();
-      const silentUtterance = new SpeechSynthesisUtterance(' ');
-      silentUtterance.volume = 0.01;
-      silentUtterance.rate = 10;
-      window.speechSynthesis.speak(silentUtterance);
-    } catch (e) {
+    } catch {
       // ignore
     }
   }
@@ -486,7 +482,10 @@ export function findBestVoice(language: Language): SpeechSynthesisVoice | undefi
  */
 function playAudioUrl(url: string, seqId?: number): Promise<void> {
   return new Promise((resolve, reject) => {
-    cancelSpeech();
+    if (seqId !== undefined && seqId !== speechSequenceId) {
+      resolve();
+      return;
+    }
 
     const audio = new Audio(url);
     activeAudioElement = audio;
@@ -500,20 +499,26 @@ function playAudioUrl(url: string, seqId?: number): Promise<void> {
     };
 
     audio.onended = () => {
+      if (activeAudioElement === audio) {
+        activeAudioElement = null;
+      }
       notifySpeechListeners(false);
-      activeAudioElement = null;
       resolve();
     };
 
     audio.onerror = () => {
+      if (activeAudioElement === audio) {
+        activeAudioElement = null;
+      }
       notifySpeechListeners(false);
-      activeAudioElement = null;
       reject(new Error(`Audio playback error: ${audio.error ? audio.error.message : 'Unknown'}`));
     };
 
     audio.play().catch((err) => {
       notifySpeechListeners(false);
-      activeAudioElement = null;
+      if (activeAudioElement === audio) {
+        activeAudioElement = null;
+      }
       reject(err);
     });
   });
@@ -530,7 +535,14 @@ export async function speakText(
   language: Language,
   options?: { forceEngine?: 'browser' | 'cloud' | 'auto' }
 ): Promise<void> {
-  if (!text || isVoiceMuted) {
+  if (!text) {
+    return;
+  }
+
+  // Cancel prior speech first before setting new sequence
+  cancelSpeech();
+
+  if (isVoiceMuted) {
     return;
   }
 
@@ -588,9 +600,8 @@ export async function speakText(
     };
     updateDiagnostics();
 
-    cancelSpeech();
-    // Chrome bug fix: Add 90ms buffer after cancel before speak
-    await new Promise((r) => setTimeout(r, 90));
+    // Chrome buffer: small pause before speaking
+    await new Promise((r) => setTimeout(r, 60));
     if (speechSequenceId !== currentSeq) {
       return;
     }
@@ -690,7 +701,7 @@ export async function speakText(
       updateDiagnostics();
     }
   } catch (err: any) {
-    console.error(`[TTS Fallback Error for ${language}]:`, err);
+    console.warn(`[TTS Fallback Notice for ${language}]:`, err?.message || err);
     if (latestDiagnostics.lastAttempt) {
       latestDiagnostics.lastAttempt.status = 'error';
       latestDiagnostics.lastAttempt.errorDetails =

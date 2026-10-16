@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language, MainServiceType, CategoryItem } from '../types';
 import { translations } from '../i18n/translations';
 import { ALL_SUBCATEGORIES } from '../data/categories';
@@ -21,6 +21,7 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
   const t = translations[language];
   const items: CategoryItem[] = ALL_SUBCATEGORIES[serviceType] || [];
   const [selectedSubcatId, setSelectedSubcatId] = useState<string | null>(null);
+  const armedSubcatRef = useRef<string | null>(null);
 
   // Screen entrance guidance
   useEffect(() => {
@@ -47,13 +48,16 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
   };
 
   const handleCardClick = (item: CategoryItem) => {
-    if (selectedSubcatId === item.id) {
+    if (armedSubcatRef.current === item.id) {
       // Second tap: open match results
       onSelectSubcategory(item);
     } else {
-      // First tap: highlight and speak
+      // First tap: highlight and speak immediately
+      armedSubcatRef.current = item.id;
       setSelectedSubcatId(item.id);
-      speakText(getSpokenText(item), language);
+      speakText(getSpokenText(item), language).catch((err) =>
+        console.warn('[Speech Notice]:', err?.message || err)
+      );
     }
   };
 

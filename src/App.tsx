@@ -44,6 +44,7 @@ import { GrowingGrassStrip, GrassProgressStage } from './components/GrowingGrass
 import {
   ProviderAccount,
   upsertProviderAccount,
+  getAccountByMobile,
 } from './utils/providerAccounts';
 import {
   loadTractorsFromStorage,
@@ -54,8 +55,22 @@ import {
 
 export function App() {
   // 1. Core Kiosk State
-  const [language, setLanguage] = useState<Language>('te');
-  const [currentScreen, setCurrentScreen] = useState<Screen>('LANGUAGE_SELECT');
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      const l = p.get('lang') as Language;
+      if (l === 'en' || l === 'te' || l === 'hi') return l;
+    }
+    return 'te';
+  });
+  const [currentScreen, setCurrentScreen] = useState<Screen>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      const s = p.get('screen') as Screen;
+      if (s) return s;
+    }
+    return 'LANGUAGE_SELECT';
+  });
   const [screenHistory, setScreenHistory] = useState<Screen[]>([]);
   const [isVoiceMutedState, setIsVoiceMutedState] = useState<boolean>(getVoiceMuted());
 
@@ -87,7 +102,15 @@ export function App() {
   const [trucksList, setTrucksList] = useState<MiniTruckService[]>(DEMO_MINI_TRUCKS);
 
   // 4. Provider Account & Auth State
-  const [loggedInAccount, setLoggedInAccount] = useState<ProviderAccount | null>(null);
+  const [loggedInAccount, setLoggedInAccount] = useState<ProviderAccount | null>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('screen') === 'PROVIDER_DASHBOARD') {
+        return getAccountByMobile('9848011901');
+      }
+    }
+    return null;
+  });
   const [, setAuthToken] = useState<string | null>(null);
 
   const handleUpdateProviderAccount = useCallback((updated: ProviderAccount) => {
