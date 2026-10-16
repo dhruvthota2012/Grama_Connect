@@ -11,6 +11,7 @@ export const translations = {
     voiceGuidanceActive: 'Voice Guidance: ON',
     voiceGuidanceMuted: 'Voice Guidance: MUTED',
     replayVoice: 'Replay Announcement',
+    teluguVoiceUnavailable: 'Telugu voice not available on this device',
 
     // Language selection
     selectLanguagePrompt: 'Select your language / భాషను ఎంచుకోండి / अपनी भाषा चुनें',
@@ -310,6 +311,7 @@ export const translations = {
     voiceGuidanceActive: 'స్వర మార్గదర్శి: ఆన్',
     voiceGuidanceMuted: 'స్వర మార్గదర్శి: మ్యూట్ చేయబడింది',
     replayVoice: 'మళ్ళీ వినండి',
+    teluguVoiceUnavailable: 'ఈ పరికరంలో తెలుగు వాయిస్ అందుబాటులో లేదు',
 
     // Language selection
     selectLanguagePrompt: 'Select your language / భాషను ఎంచుకోండి / अपनी भाषा चुनें',
@@ -609,6 +611,7 @@ export const translations = {
     voiceGuidanceActive: 'आवाज मार्गदर्शन: चालू',
     voiceGuidanceMuted: 'आवाज मार्गदर्शन: बंद',
     replayVoice: 'दोबारा सुनें',
+    teluguVoiceUnavailable: 'इस डिवाइस पर तेलुगु आवाज़ उपलब्ध नहीं है',
 
     // Language selection
     selectLanguagePrompt: 'Select your language / భాషను ఎంచుకోండి / अपनी भाषा चुनें',

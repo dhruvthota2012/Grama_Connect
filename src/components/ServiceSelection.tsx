@@ -26,7 +26,7 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
         : language === 'hi'
         ? 'आवश्यक कृषि सेवा चुनें: श्रमिक, ट्रैक्टर, हार्वेस्टर या मिनी ट्रक परिवहन।'
         : 'Select the agricultural service you need: workers, tractor, harvester, or mini truck.';
-    speakText(intro, language);
+    speakText(intro, language, { audioKey: 'step_service_select' });
   }, [language]);
 
   const services: {
@@ -113,7 +113,8 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
       // First tap: Highlight and speak immediately
       armedServiceRef.current = serviceType;
       setSelectedService(serviceType);
-      speakText(getSpokenText(svc), language).catch((err) =>
+      const audioKey = `cat_${serviceType === 'mini_truck' ? 'truck' : serviceType}`;
+      speakText(getSpokenText(svc), language, { audioKey }).catch((err) =>
         console.warn('[Speech Notice]:', err?.message || err)
       );
     }
@@ -240,7 +241,8 @@ export const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                       className="card-audio-replay-badge"
                       onClick={(e) => {
                         e.stopPropagation();
-                        speakText(getSpokenText(svc), language);
+                        const audioKey = `cat_${svc.type === 'mini_truck' ? 'truck' : svc.type}`;
+                        speakText(getSpokenText(svc), language, { audioKey });
                       }}
                       title={t.replayVoice}
                       role="button"

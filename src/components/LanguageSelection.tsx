@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Language } from '../types';
 import { useKeyboardNav } from '../hooks/useKeyboardNav';
 import { speakText } from '../utils/speechGuidance';
@@ -13,14 +13,31 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
   currentLanguage,
   onSelectLanguage,
 }) => {
+  const [selectedLang, setSelectedLang] = useState<Language>(currentLanguage);
+  const armedLangRef = useRef<Language | null>(null);
+
   const handleLanguageChoice = (lang: Language) => {
-    onSelectLanguage(lang);
-    if (lang === 'en') {
-      speakText('Language selected: English. Welcome to GramaConnect.', 'en');
-    } else if (lang === 'te') {
-      speakText('భాష ఎంపిక చేయబడింది: తెలుగు. గ్రామకనెక్ట్‌కి స్వాగతం.', 'te');
-    } else if (lang === 'hi') {
-      speakText('भाषा चुनी गई: हिन्दी। ग्रामकनेक्ट में आपका स्वागत है।', 'hi');
+    if (armedLangRef.current === lang) {
+      // Second tap: Confirm choice and navigate to Home Menu
+      onSelectLanguage(lang);
+      const confirmText =
+        lang === 'en'
+          ? 'Language selected: English. Welcome to GramaConnect.'
+          : lang === 'te'
+          ? 'భాష ఎంపిక చేయబడింది: తెలుగు. గ్రామకనెక్ట్‌కి స్వాగతం.'
+          : 'भाषा चुनी गई: हिन्दी। ग्रामकनेक्ट में आपका स्वागत है।';
+      speakText(confirmText, lang, { audioKey: 'lang_selected' }).catch(() => {});
+    } else {
+      // First tap: Arm tile immediately (never await audio) and announce in native language
+      armedLangRef.current = lang;
+      setSelectedLang(lang);
+      const labelText =
+        lang === 'en'
+          ? 'English. Tap again to select.'
+          : lang === 'te'
+          ? 'తెలుగు. ఎంపిక చేయడానికి మరోసారి నొక్కండి.'
+          : 'हिन्दी। चुनने के लिए दोबारा टैप करें।';
+      speakText(labelText, lang, { audioKey: `lang_${lang}` }).catch(() => {});
     }
   };
 
@@ -34,7 +51,7 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
   return (
     <div className="kiosk-screen language-select-screen">
       {/* 1. Paper-Cut Layered Sunrise Hero Banner (780px cinematic dawn) */}
-      <AgriculturalHeroBanner language={currentLanguage} compact={false} />
+      <AgriculturalHeroBanner language={selectedLang} compact={false} />
 
       {/* 2. Floating Language Tiles Bar Overlapping Hero Bottom Edge (-84px) */}
       <div className="shell">
@@ -45,7 +62,7 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
           </h3>
           <button
             type="button"
-            className={`tile t1 ${currentLanguage === 'en' ? 'on tile-active' : ''}`}
+            className={`tile t1 ${selectedLang === 'en' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('en')}
             aria-label="Select English language"
           >
@@ -54,7 +71,7 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
           </button>
           <button
             type="button"
-            className={`tile t2 ${currentLanguage === 'te' ? 'on tile-active' : ''}`}
+            className={`tile t2 ${selectedLang === 'te' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('te')}
             aria-label="తెలుగు భాషను ఎంచుకోండి"
           >
@@ -63,7 +80,7 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
           </button>
           <button
             type="button"
-            className={`tile t3 ${currentLanguage === 'hi' ? 'on tile-active' : ''}`}
+            className={`tile t3 ${selectedLang === 'hi' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('hi')}
             aria-label="हिन्दी भाषा चुनें"
           >

@@ -31,7 +31,7 @@ export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectActi
         : language === 'hi'
         ? 'प्रदाता केंद्र। श्रमिक, ट्रैक्टर, हार्वेस्टर पंजीकरण या प्रदाता लॉगिन चुनें।'
         : 'Provider registration hub. Choose to register worker, tractor, harvester, or provider login.';
-    speakText(intro, language);
+    speakText(intro, language, { audioKey: 'step_provider_hub' });
   }, [language]);
 
   const hubOptions: {
@@ -153,7 +153,14 @@ export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectActi
       // First tap: highlight and announce immediately
       armedActionRef.current = action;
       setSelectedAction(action);
-      speakText(getSpokenText(opt), language).catch((err) =>
+      const hubAudioKeys: Record<string, string> = {
+        REGISTER_WORKER: 'hub_worker',
+        REGISTER_TRACTOR: 'hub_tractor',
+        REGISTER_HARVESTER: 'hub_harvester',
+        REGISTER_MINI_TRUCK: 'hub_truck',
+        PROVIDER_LOGIN: 'hub_login',
+      };
+      speakText(getSpokenText(opt), language, { audioKey: hubAudioKeys[action] }).catch((err) =>
         console.warn('[Speech Notice]:', err?.message || err)
       );
     }
@@ -205,7 +212,14 @@ export const ProviderHub: React.FC<ProviderHubProps> = ({ language, onSelectActi
                       className="card-audio-replay-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        speakText(getSpokenText(opt), language);
+                        const hubAudioKeys: Record<string, string> = {
+                          REGISTER_WORKER: 'hub_worker',
+                          REGISTER_TRACTOR: 'hub_tractor',
+                          REGISTER_HARVESTER: 'hub_harvester',
+                          REGISTER_MINI_TRUCK: 'hub_truck',
+                          PROVIDER_LOGIN: 'hub_login',
+                        };
+                        speakText(getSpokenText(opt), language, { audioKey: hubAudioKeys[opt.id] });
                       }}
                       title={t.replayVoice}
                     >

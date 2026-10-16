@@ -33,7 +33,8 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
         : serviceType === 'harvester'
         ? (language === 'te' ? 'పంట కోత హార్వెస్టర్‌ను ఎంచుకోండి.' : language === 'hi' ? 'फसल कटाई हार्वेस्टर चुनें।' : 'Select crop-specific harvester.')
         : (language === 'te' ? 'రవాణా వాహన రకాన్ని ఎంచుకోండి.' : language === 'hi' ? 'परिवहन वाहन का प्रकार चुनें।' : 'Select transport service type.');
-    speakText(heading, language);
+    const introKey = `step_subcat_${serviceType === 'mini_truck' ? 'mini_truck' : serviceType}`;
+    speakText(heading, language, { audioKey: introKey });
   }, [language, serviceType]);
 
   const getSpokenText = (item: CategoryItem) => {
@@ -55,7 +56,9 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
       // First tap: highlight and speak immediately
       armedSubcatRef.current = item.id;
       setSelectedSubcatId(item.id);
-      speakText(getSpokenText(item), language).catch((err) =>
+      const cleanId = item.id.startsWith(serviceType) ? item.id : `${serviceType}_${item.id}`;
+      const audioKey = `subcat_${cleanId}`;
+      speakText(getSpokenText(item), language, { audioKey }).catch((err) =>
         console.warn('[Speech Notice]:', err?.message || err)
       );
     }
@@ -118,7 +121,8 @@ export const SubcategoryGrid: React.FC<SubcategoryGridProps> = ({
                       className="card-audio-replay-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        speakText(getSpokenText(item), language);
+                        const cleanId = item.id.startsWith(serviceType) ? item.id : `${serviceType}_${item.id}`;
+                        speakText(getSpokenText(item), language, { audioKey: `subcat_${cleanId}` });
                       }}
                       title={t.replayVoice}
                     >

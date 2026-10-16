@@ -1,0 +1,412 @@
+{
+  "welcome": {
+    "en": "Welcome to GramaConnect.",
+    "te": "గ్రామ కనెక్ట్కు స్వాగతం.",
+    "hi": "ग्राम कनेक्ट में आपका स्वागत है।"
+  },
+  "lang_selected": {
+    "en": "Language selected: English. Welcome to GramaConnect.",
+    "te": "భాష ఎంపిక చేయబడింది: తెలుగు. గ్రామకనెక్ట్‌కి స్వాగతం.",
+    "hi": "भाषा चुनी गई: हिन्दी। ग्रामकनेक्ट में आपका स्वागत है।"
+  },
+  "lang_en": {
+    "en": "English. Tap again to select.",
+    "te": "ఇంగ్లీష్. ఎంపిక చేయడానికి మరోసారి నొక్కండి.",
+    "hi": "अंग्रेजी। चुनने के लिए दोबारा टैप करें।"
+  },
+  "lang_te": {
+    "en": "Telugu. Tap again to select.",
+    "te": "తెలుగు. ఎంపిక చేయడానికి మరోసారి నొక్కండి.",
+    "hi": "तेलुगु। चुनने के लिए दोबारा टैप करें।"
+  },
+  "lang_hi": {
+    "en": "Hindi. Tap again to select.",
+    "te": "హిందీ. ఎంపిక చేయడానికి మరోసారి నొక్కండి.",
+    "hi": "हिन्दी। चुनने के लिए दोबारा टैप करें।"
+  },
+  "two_tap_hint": {
+    "en": "Tap once to hear, tap again to open",
+    "te": "తెరిచేందుకు మరోసారి నొక్కండి",
+    "hi": "खोलने के लिए दोबारा टैप करें"
+  },
+  "two_tap_open": {
+    "en": "Tap again to open",
+    "te": "తెరిచేందుకు మరోసారి నొక్కండి",
+    "hi": "खोलने के लिए दोबारा टैप करें"
+  },
+  "replay_announcement": {
+    "en": "Replay announcement",
+    "te": "మళ్ళీ వినండి",
+    "hi": "दोबारा सुनें"
+  },
+  "step_language_select": {
+    "en": "Select your language. English, Telugu, or Hindi.",
+    "te": "మీ భాషను ఎంచుకోండి. ఇంగ్లీష్, తెలుగు లేదా హిందీ.",
+    "hi": "अपनी भाषा चुनें। अंग्रेजी, तेलुगु या हिन्दी।"
+  },
+  "step_home_menu": {
+    "en": "Welcome to GramaConnect. Choose an option: looking for work, or need agricultural services.",
+    "te": "గ్రామ కనెక్ట్‌కు స్వాగతం. పని కావాలా లేక వ్యవసాయ సేవలు కావాలా? ఒకదాన్ని ఎంచుకోండి.",
+    "hi": "ग्राम कनेक्ट में आपका स्वागत है। काम चाहिए या कृषि सेवाएं चाहिए? एक विकल्प चुनें।"
+  },
+  "step_service_select": {
+    "en": "Select the agricultural service you need: workers, tractor, harvester, or mini truck.",
+    "te": "మీకు అవసరమైన వ్యవసాయ సేవను ఎంచుకోండి: కూలీలు, ట్రాక్టర్, హార్వెస్టర్ లేదా మినీ ట్రక్.",
+    "hi": "आवश्यक कृषि सेवा चुनें: श्रमिक, ट्रैक्टर, हार्वेस्टर या मिनी ट्रक परिवहन।"
+  },
+  "step_subcat_person": {
+    "en": "Select type of farm work.",
+    "te": "కూలీల పని రకాన్ని ఎంచుకోండి.",
+    "hi": "कृषि कार्य का प्रकार चुनें।"
+  },
+  "step_subcat_tractor": {
+    "en": "Select tractor attachment or service.",
+    "te": "ట్రాక్టర్ పరికరం లేదా పనిని ఎంచుకోండి.",
+    "hi": "ट्रैक्टर उपकरण या सेवा चुनें।"
+  },
+  "step_subcat_harvester": {
+    "en": "Select crop-specific harvester.",
+    "te": "పంట కోత హార్వెస్టర్‌ను ఎంచుకోండి.",
+    "hi": "फसल कटाई हार्वेस्टर चुनें।"
+  },
+  "step_subcat_mini_truck": {
+    "en": "Select transport service type.",
+    "te": "రవాణా వాహన రకాన్ని ఎంచుకోండి.",
+    "hi": "परिवहन वाहन का प्रकार चुनें।"
+  },
+  "step_provider_hub": {
+    "en": "Provider registration hub. Choose to register worker, tractor, harvester, or provider login.",
+    "te": "సేవా ప్రదాతల కేంద్రం. కూలీ, ట్రాక్టర్, హార్వెస్టర్ నమోదు లేదా ప్రొవైడర్ లాగిన్ ఎంచుకోండి.",
+    "hi": "प्रदाता केंद्र। श्रमिक, ट्रैक्टर, हार्वेस्टर पंजीकरण या प्रदाता लॉगिन चुनें।"
+  },
+  "step_provider_login": {
+    "en": "Provider login. Enter your registered 10-digit mobile number.",
+    "te": "ప్రొవైడర్ లాగిన్. మీ 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.",
+    "hi": "प्रदाता लॉगिन। अपना 10 अंकों का मोबाइल नंबर दर्ज करें।"
+  },
+  "step_worker_reg": {
+    "en": "Agricultural worker registration. Select your farm skills, then enter your full name and 10-digit mobile number.",
+    "te": "వ్యవసాయ కూలీ నమోదు. మీ పనులను ఎంచుకుని, పూర్తి పేరు మరియు 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.",
+    "hi": "कृषि श्रमिक पंजीकरण। अपने कौशल चुनें और पूरा नाम तथा 10 अंकों का मोबाइल नंबर दर्ज करें।"
+  },
+  "step_machinery_reg_tractor": {
+    "en": "Tractor daily registration. Select current working attachment and enter contact details.",
+    "te": "ట్రాక్టర్ రోజువారీ నమోదు. ప్రస్తుత పని పరికరాన్ని ఎంచుకుని వివరాలు నమోదు చేయండి.",
+    "hi": "ट्रैक्टर दैनिक पंजीकरण। वर्तमान कार्य उपकरण चुनें और विवरण दर्ज करें।"
+  },
+  "step_machinery_reg_harvester": {
+    "en": "Harvester registration. Select supported crops and enter contact details.",
+    "te": "హార్వెస్టర్ నమోదు. పంటలను ఎంచుకుని వివరాలు నమోదు చేయండి.",
+    "hi": "हार्वेस्टर पंजीकरण। समर्थित फसलें चुनें और विवरण दर्ज करें।"
+  },
+  "step_machinery_reg_mini_truck": {
+    "en": "Mini-truck registration. Choose vehicle configuration and enter contact details.",
+    "te": "మినీ ట్రక్ రవాణా నమోదు. వాహన వివరాలు మరియు ఫోన్ నంబర్ నమోదు చేయండి.",
+    "hi": "मिनी-ट्रक परिवहन पंजीकरण। वाहन विनिर्देश चुनें और संपर्क विवरण दर्ज करें।"
+  },
+  "menu_work": {
+    "en": "I am looking for work or offering services",
+    "te": "నాకు పని కావాలి లేదా సేవలు అందించడానికి",
+    "hi": "मुझे काम चाहिए या सेवाएं प्रदान करनी हैं"
+  },
+  "menu_services": {
+    "en": "I need agricultural services",
+    "te": "నాకు వ్యవసాయ సేవలు కావాలి",
+    "hi": "मुझे कृषि सेवाएं चाहिए"
+  },
+  "cat_person": {
+    "en": "Selected Agricultural Workers. Tap again to choose the specific agricultural work.",
+    "te": "వ్యవసాయ కూలీలు ఎంపిక చేయబడింది. రకాన్ని ఎంచుకోవడానికి మరోసారి నొక్కండి.",
+    "hi": "कृषि मजदूर चुना गया। विशिष्ट कार्य चुनने के लिए दोबारा टैप करें।"
+  },
+  "cat_tractor": {
+    "en": "Selected Tractor and Attachments. Tap again to choose the specific agricultural work.",
+    "te": "ట్రాక్టర్ మరియు పరికరాలు ఎంపిక చేయబడింది. రకాన్ని ఎంచుకోవడానికి మరోసారి నొక్కండి.",
+    "hi": "ट्रैक्टर और उपकरण चुना गया। विशिष्ट कार्य चुनने के लिए दोबारा टैप करें।"
+  },
+  "cat_harvester": {
+    "en": "Selected Crop Harvesters. Tap again to choose the specific agricultural work.",
+    "te": "కోత హార్వెస్టర్ ఎంపిక చేయబడింది. రకాన్ని ఎంచుకోవడానికి మరోసారి నొక్కండి.",
+    "hi": "फसल कटाई हार्वेस्टर चुना गया। विशिष्ट कार्य चुनने के लिए दोबारा टैप करें।"
+  },
+  "cat_truck": {
+    "en": "Selected Mini Truck Transport. Tap again to choose the specific agricultural work.",
+    "te": "మినీ ట్రక్ రవాణా ఎంపిక చేయబడింది. రకాన్ని ఎంచుకోవడానికి మరోసారి నొక్కండి.",
+    "hi": "मिनी ट्रक परिवहन चुना गया। विशिष्ट कार्य चुनने के लिए दोबारा टैप करें।"
+  },
+  "hub_worker": {
+    "en": "Register as Agricultural Worker",
+    "te": "వ్యవసాయ కూలీగా నమోదు చేసుకోండి",
+    "hi": "कृषि मजदूर के रूप में पंजीकरण"
+  },
+  "hub_tractor": {
+    "en": "Tractor Daily Registration (Valid Today Only)",
+    "te": "ట్రాక్టర్ రోజువారీ నమోదు (ఈ రోజు మాత్రమే)",
+    "hi": "ट्रैक्टर दैनिक पंजीकरण (केवल आज के लिए मान्य)"
+  },
+  "hub_harvester": {
+    "en": "Register a Crop Harvester",
+    "te": "పంట కోత హార్వెస్టర్‌ను నమోదు చేయండి",
+    "hi": "फसल हार्वेस्टर पंजीकृत करें"
+  },
+  "hub_truck": {
+    "en": "Register a Mini-Truck for Transport",
+    "te": "మినీ ట్రక్ రవాణా వాహనాన్ని నమోదు చేయండి",
+    "hi": "मिनी ट्रक परिवहन वाहन पंजीकृत करें"
+  },
+  "hub_login": {
+    "en": "Provider Login & Account Dashboard",
+    "te": "ప్రొవైడర్ లాగిన్ & ఖాతా డ్యాష్‌బోర్డ్",
+    "hi": "प्रदाता लॉगिन व खाता डैशबोर्ड"
+  },
+  "subcat_person_sowing": {
+    "en": "Selected Sowing Seeds. Tap again to view available providers at Rampur Panchayat.",
+    "te": "విత్తనాలు విత్తడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "बीज बोना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_transplanting": {
+    "en": "Selected Transplanting Rice Seedlings. Tap again to view available providers at Rampur Panchayat.",
+    "te": "వరి నాట్లు వేయడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "धान की रोपाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_harvesting": {
+    "en": "Selected Harvesting Crops. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పంట కోత పనులు ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "फसल की कटाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_weeding": {
+    "en": "Selected Weeding. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కలుపు తీయడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "निराई-गुड़ाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_fertilizer": {
+    "en": "Selected Fertilizer Application. Tap again to view available providers at Rampur Panchayat.",
+    "te": "ఎరువులు వేయడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "खाद डालना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_spraying": {
+    "en": "Selected Pesticide Spraying. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పురుగుమందుల పిచికారీ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "कीटनाशक छिड़काव चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_irrigation": {
+    "en": "Selected Irrigation & Watering. Tap again to view available providers at Rampur Panchayat.",
+    "te": "నీటి పారుదల పనులు ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सिंचाई और पानी देना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_ploughing_assist": {
+    "en": "Selected Ploughing Assistance. Tap again to view available providers at Rampur Panchayat.",
+    "te": "దుక్కి దున్నడంలో సాయం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "जुताई में सहायता चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_fruit_picking": {
+    "en": "Selected Fruit Picking. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పండ్ల కోత ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "फल तोड़ना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_vegetable_picking": {
+    "en": "Selected Vegetable Picking. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కూరగాయల కోత ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सब्जी तोड़ना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_cotton_picking": {
+    "en": "Selected Cotton Picking. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పత్తి తీయడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "कपास चुनाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_paddy_harvesting": {
+    "en": "Selected Paddy Harvesting & Threshing. Tap again to view available providers at Rampur Panchayat.",
+    "te": "వరి కోత & నూర్పిడి ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "धान कटाई और गहाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_groundnut_harvesting": {
+    "en": "Selected Groundnut Harvesting. Tap again to view available providers at Rampur Panchayat.",
+    "te": "వేరుశనగ పీకడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मूंगफली उखाड़ना चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_sugarcane_cutting": {
+    "en": "Selected Sugarcane Cutting. Tap again to view available providers at Rampur Panchayat.",
+    "te": "చెరకు నరకడం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "गन्ना कटाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_produce_loading": {
+    "en": "Selected Produce Loading & Unloading. Tap again to view available providers at Rampur Panchayat.",
+    "te": "దిగుబడి లోడింగ్ & అన్‌లోడింగ్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सवारी और माल ढुलाई चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_person_general_labour": {
+    "en": "Selected General Agricultural Labour. Tap again to view available providers at Rampur Panchayat.",
+    "te": "సాధారణ వ్యవసాయ కూలీ పనులు ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सामान्य कृषि मजदूरी चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_trolley": {
+    "en": "Selected Tractor with Trolley / Trailer. Tap again to view available providers at Rampur Panchayat.",
+    "te": "ట్రాలీ / ట్రైలర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "ट्रॉली के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_plough": {
+    "en": "Selected Tractor with Mouldboard Plough. Tap again to view available providers at Rampur Panchayat.",
+    "te": "నాగలితో ట్రాక్టర్ (ఎంబీ ప్లవ్) ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "हल के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_seeder": {
+    "en": "Selected Tractor with Seed Drill / Seeder. Tap again to view available providers at Rampur Panchayat.",
+    "te": "విత్తన గొర్రుతో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सीड ड्रिल (बीज बोने की मशीन) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_cultivator": {
+    "en": "Selected Tractor with Cultivator. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కల్టివేటర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "कल्टीवेटर के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_rotavator": {
+    "en": "Selected Tractor with Rotavator. Tap again to view available providers at Rampur Panchayat.",
+    "te": "రోటవేటర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "रोटावेटर के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_harrow": {
+    "en": "Selected Tractor with Disc Harrow. Tap again to view available providers at Rampur Panchayat.",
+    "te": "డిస్క్ హారోతో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "डिस्क हैरो के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_disc_plough": {
+    "en": "Selected Tractor with Heavy Disc Plough. Tap again to view available providers at Rampur Panchayat.",
+    "te": "డిస్క్ నాగలితో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "डिस्क प्लाउ के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_trailer_heavy": {
+    "en": "Selected Heavy Duty 4-Wheel Trailer. Tap again to view available providers at Rampur Panchayat.",
+    "te": "భారీ 4-చక్రాల ట్రైలర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "भारी 4-पहिया ट्रेलर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_water_tanker": {
+    "en": "Selected Tractor with Water Tanker (5000L). Tap again to view available providers at Rampur Panchayat.",
+    "te": "వాటర్ ట్యాంకర్‌తో ట్రాక్టర్ (5000లీ) ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "पानी का टैंकर (5000L) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_sprayer": {
+    "en": "Selected Tractor with Boom Sprayer. Tap again to view available providers at Rampur Panchayat.",
+    "te": "బూమ్ స్ప్రేయర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "बूम स्प्रेयर के साथ ट्रैक्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_grass_cutter": {
+    "en": "Selected Tractor with Fodder & Grass Cutter. Tap again to view available providers at Rampur Panchayat.",
+    "te": "గడ్డి కట్టర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "चारा काटने की मशीन (रीपर) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_grass_collector": {
+    "en": "Selected Tractor with Grass Collector (Rake). Tap again to view available providers at Rampur Panchayat.",
+    "te": "గడ్డి సేకరించే రేక్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "घास इकट्ठा करने वाला (रेक) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_baler": {
+    "en": "Selected Tractor with Straw Baler. Tap again to view available providers at Rampur Panchayat.",
+    "te": "స్ట్రా బేలర్‌తో ట్రాక్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "पुआल बेलर मशीन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_tractor_leveller": {
+    "en": "Selected Laser Land Leveller. Tap again to view available providers at Rampur Panchayat.",
+    "te": "లేజర్ ల్యాండ్ లెవెలర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "लेजर लैंड लेवलर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_paddy": {
+    "en": "Selected Paddy / Rice Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "వరి హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "धान हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_combine": {
+    "en": "Selected Multi-Crop Combine Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "మల్టీ-క్రాప్ కంబైన్ హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मल्टी-क्रॉप कंबाइन हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_wheat": {
+    "en": "Selected Wheat Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "గోధుమ హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "गेहूं हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_maize": {
+    "en": "Selected Maize / Corn Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "మొక్కజొన్న హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मक्का हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_sugarcane": {
+    "en": "Selected Sugarcane Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "చెరకు హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "गन्ना कटाई हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_cotton": {
+    "en": "Selected Cotton Picker Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పత్తి తీసే మెషిన్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "कपास चुनने की मशीन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_groundnut": {
+    "en": "Selected Groundnut Digger & Shaker. Tap again to view available providers at Rampur Panchayat.",
+    "te": "వేరుశనగ డిగ్గర్ యంత్రం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मूंगफली डिगर (निकालने की मशीन) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_potato": {
+    "en": "Selected Potato Digger. Tap again to view available providers at Rampur Panchayat.",
+    "te": "బంగాళాదుంప డిగ్గర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "आलू निकालने की मशीन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_vegetable": {
+    "en": "Selected Vegetable Harvester. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కూరగాయల కోత యంత్రం ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सब्जी हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_forage": {
+    "en": "Selected Forage Harvester (Silage Chopper). Tap again to view available providers at Rampur Panchayat.",
+    "te": "సైలేజ్ ఫోరేజ్ హార్వెస్టర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "साइलेज और चारा हार्वेस्टर चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_reaper_binder": {
+    "en": "Selected Reaper Binder Machine. Tap again to view available providers at Rampur Panchayat.",
+    "te": "రీపర్ బైండర్ మెషిన్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "रीपर बाइंडर मशीन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_harvester_thresher": {
+    "en": "Selected Multi-Crop Stationary Thresher. Tap again to view available providers at Rampur Panchayat.",
+    "te": "స్టేషనరీ మల్టీ-క్రాప్ థ్రెషర్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मल्टी-क्रॉप थ्रेशर (गहाई मशीन) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_vegetable": {
+    "en": "Selected Vegetable Transport Mini-Truck. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కూరగాయల రవాణా మినీ ట్రక్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "सब्जी परिवहन (मिनी ट्रक) चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_fruit": {
+    "en": "Selected Fruit Transport Mini-Truck. Tap again to view available providers at Rampur Panchayat.",
+    "te": "పండ్ల రవాణా మినీ ట్రక్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "फल परिवहन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_paddy_bags": {
+    "en": "Selected Paddy & Grain Sacks Haulage. Tap again to view available providers at Rampur Panchayat.",
+    "te": "ధాన్యం బస్తాల రవాణా ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "धान और अनाज बोरी परिवहन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_fertilizer": {
+    "en": "Selected Fertilizer & Seed Sacks Delivery. Tap again to view available providers at Rampur Panchayat.",
+    "te": "ఎరువులు & విత్తనాల డెలివరీ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "खाद और बीज डिलीवरी चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_machinery": {
+    "en": "Selected Farm Machinery & Implements Carrier. Tap again to view available providers at Rampur Panchayat.",
+    "te": "చిన్న యంత్రాల రవాణా ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "कृषि उपकरण परिवहन चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_open_body": {
+    "en": "Selected Open Bed Mini-Truck. Tap again to view available providers at Rampur Panchayat.",
+    "te": "ఓపెన్ బెడ్ మినీ ట్రక్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "ओपन डाला मिनी ट्रक चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_covered_body": {
+    "en": "Selected Covered Weatherproof Canopy Truck. Tap again to view available providers at Rampur Panchayat.",
+    "te": "కవర్డ్ టార్పాలిన్ మినీ ట్రక్ ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "तिरपाल ढका मिनी ट्रक चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  },
+  "subcat_truck_mandi_express": {
+    "en": "Selected Direct Mandi Express Route. Tap again to view available providers at Rampur Panchayat.",
+    "te": "డైరెక్ట్ మార్కెట్ యార్డ్ రవాణా ఎంపిక చేయబడింది. రాంపూర్ పంచాయతీలో అందుబాటులో ఉన్నవారిని చూడటానికి మరోసారి నొక్కండి.",
+    "hi": "मंडी एक्सप्रेस ट्रांसपोर्ट चुना गया। रामपुर पंचायत में उपलब्ध प्रदाता देखने के लिए दोबारा टैप करें।"
+  }
+}

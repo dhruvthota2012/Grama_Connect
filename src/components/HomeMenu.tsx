@@ -24,7 +24,7 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
         : language === 'hi'
         ? 'ग्राम कनेक्ट में आपका स्वागत है। काम चाहिए या कृषि सेवाएं चाहिए? एक विकल्प चुनें।'
         : 'Welcome to GramaConnect. Choose an option: looking for work, or need agricultural services.';
-    speakText(intro, language);
+    speakText(intro, language, { audioKey: 'step_home_menu' });
   }, [language]);
 
   const getSpokenText = (option: 'LOOKING_FOR_WORK' | 'NEED_SERVICES') => {
@@ -51,7 +51,8 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
       // First tap: highlight and announce voice immediately
       armedOptionRef.current = option;
       setSelectedOption(option);
-      speakText(getSpokenText(option), language).catch((err) =>
+      const audioKey = option === 'LOOKING_FOR_WORK' ? 'menu_work' : 'menu_services';
+      speakText(getSpokenText(option), language, { audioKey }).catch((err) =>
         console.warn('[Speech Notice]:', err?.message || err)
       );
     }
