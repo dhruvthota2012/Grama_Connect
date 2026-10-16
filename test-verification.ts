@@ -50,6 +50,7 @@ function runTestSuite() {
 
   let passed = 0;
   let failed = 0;
+  const todayTestDate = getKioskTodayDateString();
 
   function assert(condition: boolean, testName: string) {
     if (condition) {
@@ -144,7 +145,7 @@ function runTestSuite() {
     villageId: 'rampur',
     villageNameEn: 'Rampur',
     villageNameTe: 'రాంపూర్',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 4,
     duration: '1_DAY',
     offeredWage: 500,
@@ -171,7 +172,7 @@ function runTestSuite() {
     villageId: 'rampur',
     villageNameEn: 'Rampur',
     villageNameTe: 'రాంపూర్',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 2,
     duration: '1_DAY',
   };
@@ -192,7 +193,7 @@ function runTestSuite() {
     villageId: 'rampur',
     villageNameEn: 'Rampur',
     villageNameTe: 'రాంపూర్',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 1,
     duration: '1_DAY',
   };
@@ -212,7 +213,7 @@ function runTestSuite() {
     villageId: 'rampur',
     villageNameEn: 'Rampur',
     villageNameTe: 'రాంపూర్',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 5,
     duration: '1_DAY',
   };
@@ -236,7 +237,7 @@ function runTestSuite() {
     villageId: 'shivapuram',
     villageNameEn: 'Shivapuram',
     villageNameTe: 'శివపురం',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 1,
     duration: '1_DAY',
     destinationVillageId: 'siricilla',
@@ -258,7 +259,7 @@ function runTestSuite() {
     villageId: 'rampur',
     villageNameEn: 'Rampur',
     villageNameTe: 'రాంపూర్',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 1,
     duration: '1_DAY',
   };
@@ -280,7 +281,7 @@ function runTestSuite() {
     dailyWage: 420,
     experienceYears: 6,
     availability: 'IMMEDIATE',
-    availableDates: ['2026-10-16', '2026-10-17'],
+    availableDates: ['2026-10-16', '2026-10-17', '2026-10-18'],
     contactDemo: '98480-99999 (Demo)',
     isRegisteredUser: true,
   };
@@ -294,7 +295,7 @@ function runTestSuite() {
     villageId: 'krishnapuram',
     villageNameEn: 'Krishnapuram',
     villageNameTe: 'కృష్ణాపురం',
-    date: '2026-10-16',
+    date: todayTestDate,
     quantity: 2,
     duration: '1_DAY',
   };
