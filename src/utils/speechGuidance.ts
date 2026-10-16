@@ -1,4 +1,5 @@
 import { Language } from '../types';
+import { getApiUrl } from './apiConfig';
 
 export interface SpeechDiagnostics {
   isSpeechSynthesisAvailable: boolean;
@@ -244,7 +245,7 @@ export async function checkServerTtsStatus(): Promise<ServerTtsStatus | null> {
   if (typeof window === 'undefined') return null;
 
   try {
-    const res = await fetch('/api/tts/status');
+    const res = await fetch(getApiUrl('/api/tts/status'));
     if (res.ok) {
       const data = (await res.json()) as ServerTtsStatus;
       serverTtsStatusState = {
@@ -670,7 +671,7 @@ export async function speakText(
 
   // 3. Fallback: Browser lacks authentic voice (Typical for Telugu in desktop Chrome/Windows)
   // Request Server TTS endpoint /api/tts
-  const ttsUrl = `/api/tts?text=${encodeURIComponent(normalizedText)}&lang=${language}`;
+  const ttsUrl = getApiUrl(`/api/tts?text=${encodeURIComponent(normalizedText)}&lang=${language}`);
 
   latestDiagnostics.lastAttempt = {
     text: normalizedText,

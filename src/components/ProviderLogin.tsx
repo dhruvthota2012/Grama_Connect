@@ -8,6 +8,7 @@ import {
   upsertProviderAccount,
 } from '../utils/providerAccounts';
 import { speakText } from '../utils/speechGuidance';
+import { getApiUrl } from '../utils/apiConfig';
 import {
   Phone,
   KeyRound,
@@ -41,6 +42,7 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
   const [step, setStep] = useState<'MOBILE' | 'OTP'>('MOBILE');
   const [mobile, setMobile] = useState<string>('');
   const [otp, setOtp] = useState<string>('');
+  const [verificationSessionToken, setVerificationSessionToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
@@ -53,12 +55,16 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
 
   // Check auth server status on mount
   useEffect(() => {
-    fetch('/api/auth/status')
-      .then((res) => res.json())
+    fetch(getApiUrl('/api/auth/status'))
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         setIsSimulatedGateway(Boolean(data.demoMode));
       })
-      .catch(() => {
+      .catch((err) => {
+        console.warn('[Auth Status Check Notice]:', err.message);
         setIsSimulatedGateway(true);
       });
   }, []);
@@ -151,17 +157,64 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
 
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/send-otp', {
+      const url = getApiUrl('/api/auth/send-otp');
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobile: cleanMobile }),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setErrorMessage(data.message || 'Failed to send OTP.');
+      const contentType = res.headers.get('content-type') || '';
+      let data: any = null;
+      let rawText = '';
+
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch {
+          rawText = await res.text().catch(() => '');
+          console.error('[OTP Send Error] JSON parse failure, status:', res.status, rawText);
+        }
+      } else {
+        rawText = await res.text().catch(() => '');
+        console.error('[OTP Send Error] Non-JSON response, status:', res.status, rawText);
+      }
+
+      if (!res.ok) {
+        console.error('[OTP Send Error] HTTP', res.status, data || rawText);
+        if (res.status === 404) {
+          setErrorMessage(
+            language === 'te'
+              ? 'OTP సర్వర్ అందుబాటులో లేదు (404). దయచేసి కాసేపటి తర్వాత ప్రయత్నించండి.'
+              : language === 'hi'
+              ? 'OTP सर्वर उपलब्ध नहीं है (404)। कृपया थोड़ी देर बाद प्रयास करें।'
+              : 'OTP service endpoint is unreachable (404). Please check deployment.'
+          );
+        } else if (res.status === 429) {
+          const waitMsg =
+            data?.message ||
+            (language === 'te'
+              ? 'చాలా ప్రయత్నాలు జరిగాయి. దయచేసి కాసేపు వేచి ఉండండి.'
+              : language === 'hi'
+              ? 'बहुत सारे प्रयास। कृपया थोड़ी देर प्रतीक्षा करें।'
+              : 'Too many requests. Please wait before retrying.');
+          setErrorMessage(waitMsg);
+          if (data?.cooldownSeconds) setCooldown(data.cooldownSeconds);
+        } else {
+          setErrorMessage(data?.message || `Server error (${res.status}). Please try again.`);
+        }
         setIsLoading(false);
         return;
+      }
+
+      if (!data || !data.success) {
+        setErrorMessage(data?.message || 'Failed to send OTP.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.sessionToken) {
+        setVerificationSessionToken(data.sessionToken);
       }
 
       setStep('OTP');
@@ -180,6 +233,7 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
         language
       );
     } catch (err: any) {
+      console.error('[OTP Send Error] Exception:', err);
       setErrorMessage('Network error while requesting OTP. Please check connection.');
     } finally {
       setIsLoading(false);
@@ -206,15 +260,54 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
 
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/verify-otp', {
+      const url = getApiUrl('/api/auth/verify-otp');
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile: cleanMobile, otp }),
+        body: JSON.stringify({
+          mobile: cleanMobile,
+          otp,
+          sessionToken: verificationSessionToken || undefined,
+        }),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setErrorMessage(data.message || 'Incorrect verification code.');
+      const contentType = res.headers.get('content-type') || '';
+      let data: any = null;
+      let rawText = '';
+
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch {
+          rawText = await res.text().catch(() => '');
+          console.error('[OTP Verify Error] JSON parse failure, status:', res.status, rawText);
+        }
+      } else {
+        rawText = await res.text().catch(() => '');
+        console.error('[OTP Verify Error] Non-JSON response, status:', res.status, rawText);
+      }
+
+      if (!res.ok) {
+        console.error('[OTP Verify Error] HTTP', res.status, data || rawText);
+        if (res.status === 404) {
+          setErrorMessage(
+            language === 'te'
+              ? 'ధృవీకరణ సర్వర్ అందుబాటులో లేదు (404).'
+              : language === 'hi'
+              ? 'सत्यापन सर्वर उपलब्ध नहीं है (404)।'
+              : 'Verification endpoint is unreachable (404).'
+          );
+        } else if (res.status === 429) {
+          setErrorMessage(data?.message || 'Too many invalid attempts. Please request a new OTP.');
+        } else {
+          setErrorMessage(data?.message || `Verification failed (${res.status}).`);
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      if (!data || !data.success) {
+        setErrorMessage(data?.message || 'Incorrect verification code.');
         setIsLoading(false);
         return;
       }
@@ -249,6 +342,7 @@ export const ProviderLogin: React.FC<ProviderLoginProps> = ({
 
       onLoginSuccess(account, data.token);
     } catch (err: any) {
+      console.error('[OTP Verify Error] Exception:', err);
       setErrorMessage('Network error during verification. Please try again.');
     } finally {
       setIsLoading(false);
