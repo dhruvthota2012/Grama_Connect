@@ -106,7 +106,7 @@ export function App() {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
       if (p.get('screen') === 'PROVIDER_DASHBOARD') {
-        return getAccountByMobile('9848011901');
+        return getAccountByMobile('9848011901') || null;
       }
     }
     return null;
