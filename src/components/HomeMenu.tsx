@@ -50,129 +50,97 @@ export const HomeMenu: React.FC<HomeMenuProps> = ({ language, onSelectOption }) 
 
   return (
     <div className="kiosk-screen home-menu-screen">
-      <div className="screen-header-center">
-        <h2 className="welcome-title">{t.welcome}</h2>
-        <p className="welcome-question">{t.whatWouldYouLike}</p>
-        <p className="voice-guidance-instruction">
-          <Volume2 size={18} />
-          <span>{t.twoTapHint}</span>
-        </p>
-        <div className="kiosk-divider" />
-      </div>
-
       <AgriculturalHeroBanner language={language} compact={true} />
 
-      <div className="kiosk-menu-grid">
-        {/* Option 1: Looking for Work / Offer Services */}
-        <button
-          type="button"
-          className={`kiosk-menu-card choice-work ${selectedOption === 'LOOKING_FOR_WORK' ? 'selected-highlight' : ''}`}
-          onClick={() => handleCardClick('LOOKING_FOR_WORK')}
-        >
-          <div className="card-top-bar">
-            <span className="card-number-badge">1</span>
+      <div className="shell">
+        <div className="screen-header-center">
+          <h2 className="welcome-title">{t.welcome}</h2>
+          <p className="welcome-question">{t.whatWouldYouLike}</p>
+          <p className="voice-guidance-instruction">
+            <Volume2 size={18} />
+            <span>{t.twoTapHint}</span>
+          </p>
+        </div>
+
+        <div className="choices kiosk-menu-grid">
+          {/* Option 1: Looking for Work / Offer Services */}
+          <div
+            className={`card g kiosk-menu-card choice-work ${selectedOption === 'LOOKING_FOR_WORK' ? 'selected-highlight on' : ''}`}
+            onClick={() => handleCardClick('LOOKING_FOR_WORK')}
+            role="button"
+            tabIndex={0}
+          >
+            <div className="key card-number-badge">1</div>
+            <div className="medal card-illustration-wrap">
+              <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
+                <circle cx="48" cy="26" r="13" fill="#8A5A3A" />
+                <path d="M30 22Q48 2 66 22Z" fill="#F3C969" />
+                <path d="M28 86V60Q28 44 48 44T68 60V86Z" fill="#279653" />
+                <path d="M68 58q14-6 20 6" stroke="#8A5A3A" strokeWidth="6" fill="none" strokeLinecap="round" />
+                <path d="M88 62c-2-9 4-14 4-14s6 6 2 14" fill="#176B45" />
+              </svg>
+            </div>
+
+            <div className="card-details">
+              <h3 className="card-main-title">{t.optionWork}</h3>
+              <p className="card-desc">{t.optionWorkSub}</p>
+            </div>
+
+            <div className="go card-go-arrow" aria-hidden="true">→</div>
+
             {selectedOption === 'LOOKING_FOR_WORK' && (
-              <div className="card-selected-top-controls">
-                <span className="tap-confirm-badge">{t.tapAgainToOpen}</span>
-                <span
-                  role="button"
-                  tabIndex={0}
-                  className="card-audio-replay-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    speakText(getSpokenText('LOOKING_FOR_WORK'), language);
-                  }}
-                  title={t.replayVoice}
-                >
-                  <Volume2 size={18} />
-                </span>
+              <div className="card-tap-again-footer">
+                <span>{t.tapAgainToOpen}</span>
               </div>
             )}
           </div>
 
-          <div className="card-illustration-wrap">
-            <svg width="100" height="100" viewBox="0 0 96 96" aria-hidden="true">
-              <circle cx="48" cy="26" r="13" fill="#8A5A3A" />
-              <path d="M30 22Q48 2 66 22Z" fill="#F3C969" />
-              <path d="M28 86V60Q28 44 48 44T68 60V86Z" fill="#279653" />
-              <path d="M68 58q14-6 20 6" stroke="#8A5A3A" strokeWidth="6" fill="none" strokeLinecap="round" />
-              <path d="M88 62c-2-9 4-14 4-14s6 6 2 14" fill="#176B45" />
-            </svg>
-          </div>
-
-          <div className="card-details">
-            <h3 className="card-main-title">{t.optionWork}</h3>
-            <p className="card-desc">{t.optionWorkSub}</p>
-          </div>
-
-          <div className="card-go-arrow" aria-hidden="true">→</div>
-
-          {selectedOption === 'LOOKING_FOR_WORK' && (
-            <div className="card-tap-again-footer">
-              <span>{t.tapAgainToOpen}</span>
+          {/* Option 2: Need Agricultural Services */}
+          <div
+            className={`card b kiosk-menu-card choice-services ${selectedOption === 'NEED_SERVICES' ? 'selected-highlight on' : ''}`}
+            onClick={() => handleCardClick('NEED_SERVICES')}
+            role="button"
+            tabIndex={0}
+          >
+            <div className="key card-number-badge">2</div>
+            <div className="medal card-illustration-wrap">
+              <svg width="110" height="96" viewBox="0 0 110 96" aria-hidden="true">
+                <rect x="8" y="46" width="14" height="22" rx="3" fill="#E8A91C" />
+                <rect x="30" y="36" width="52" height="30" rx="8" fill="#C8553D" />
+                <rect x="56" y="14" width="26" height="26" rx="5" fill="#A8412D" />
+                <rect x="60" y="19" width="16" height="12" rx="2" fill="#EAF6FC" />
+                <circle cx="40" cy="68" r="18" fill="#3B2A1E" />
+                <circle cx="40" cy="68" r="8" fill="#F3C969" />
+                <circle cx="84" cy="74" r="12" fill="#3B2A1E" />
+                <circle cx="84" cy="74" r="5" fill="#F3C969" />
+              </svg>
             </div>
-          )}
-        </button>
 
-        {/* Option 2: Need Agricultural Services */}
-        <button
-          type="button"
-          className={`kiosk-menu-card choice-services ${selectedOption === 'NEED_SERVICES' ? 'selected-highlight' : ''}`}
-          onClick={() => handleCardClick('NEED_SERVICES')}
-        >
-          <div className="card-top-bar">
-            <span className="card-number-badge">2</span>
+            <div className="card-details">
+              <h3 className="card-main-title">{t.optionService}</h3>
+              <p className="card-desc">{t.optionServiceSub}</p>
+            </div>
+
+            <div className="go card-go-arrow" aria-hidden="true">→</div>
+
             {selectedOption === 'NEED_SERVICES' && (
-              <div className="card-selected-top-controls">
-                <span className="tap-confirm-badge">{t.tapAgainToOpen}</span>
-                <span
-                  role="button"
-                  tabIndex={0}
-                  className="card-audio-replay-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    speakText(getSpokenText('NEED_SERVICES'), language);
-                  }}
-                  title={t.replayVoice}
-                >
-                  <Volume2 size={18} />
-                </span>
+              <div className="card-tap-again-footer">
+                <span>{t.tapAgainToOpen}</span>
               </div>
             )}
           </div>
+        </div>
 
-          <div className="card-illustration-wrap">
-            <svg width="114" height="100" viewBox="0 0 110 96" aria-hidden="true">
-              <rect x="8" y="46" width="14" height="22" rx="3" fill="#E8A91C" />
-              <rect x="30" y="36" width="52" height="30" rx="8" fill="#C8553D" />
-              <rect x="56" y="14" width="26" height="26" rx="5" fill="#A8412D" />
-              <rect x="60" y="19" width="16" height="12" rx="2" fill="#EAF6FC" />
-              <circle cx="40" cy="68" r="18" fill="#3B2A1E" />
-              <circle cx="40" cy="68" r="8" fill="#F3C969" />
-              <circle cx="84" cy="74" r="12" fill="#3B2A1E" />
-              <circle cx="84" cy="74" r="5" fill="#F3C969" />
-            </svg>
-          </div>
-
-          <div className="card-details">
-            <h3 className="card-main-title">{t.optionService}</h3>
-            <p className="card-desc">{t.optionServiceSub}</p>
-          </div>
-
-          <div className="card-go-arrow" aria-hidden="true">→</div>
-
-          {selectedOption === 'NEED_SERVICES' && (
-            <div className="card-tap-again-footer">
-              <span>{t.tapAgainToOpen}</span>
-            </div>
-          )}
-        </button>
-      </div>
-
-      <div className="kiosk-footer-instructions">
-        <p>
-          👉 <strong>{t.twoTapHint}</strong> | {language === 'te' ? 'కీబోర్డ్ 1 లేదా 2 నొక్కండి' : language === 'hi' ? 'कीबोर्ड 1 या 2 दबाएं' : 'Press keyboard key 1 or 2'}
-        </p>
+        <div className="kiosk-footer-instructions">
+          <p>
+            👉 <strong>{t.twoTapHint}</strong> |{' '}
+            {language === 'te'
+              ? 'కీబోర్డ్ 1 లేదా 2 నొక్కండి'
+              : language === 'hi'
+              ? 'कीबोर्ड 1 या 2 दबाएं'
+              : 'Press keyboard key 1 or 2'}
+          </p>
+        </div>
       </div>
     </div>
   );

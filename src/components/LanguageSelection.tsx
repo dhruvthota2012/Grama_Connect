@@ -33,44 +33,37 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
 
   return (
     <div className="kiosk-screen language-select-screen">
-      {/* 1. Paper-Cut Layered Sunrise Hero Banner */}
+      {/* 1. Paper-Cut Layered Sunrise Hero Banner (780px cinematic dawn) */}
       <AgriculturalHeroBanner language={currentLanguage} compact={false} />
 
-      {/* 2. Floating Language Tiles Bar Overlapping Hero Edge */}
-      <div className="lang">
-        <h3>
-          Select your language
-          <small style={{ font: "600 16px 'Noto Sans'", color: '#5b6b78', display: 'block', marginTop: '4px' }}>
-            భాషను ఎంచుకోండి · अपनी भाषा चुनें
-          </small>
-        </h3>
-        <div className="tiles">
-          {/* Tile 1: English */}
+      {/* 2. Floating Language Tiles Bar Overlapping Hero Bottom Edge (-84px) */}
+      <div className="shell">
+        <div className="lang">
+          <h3>
+            Select your language
+            <small>భాషను ఎంచుకోండి · अपनी भाषा चुनें</small>
+          </h3>
           <button
             type="button"
-            className={`tile t1 ${currentLanguage === 'en' ? 'tile-active' : ''}`}
+            className={`tile t1 ${currentLanguage === 'en' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('en')}
             aria-label="Select English language"
           >
             <b>A</b>
             <span>English</span>
           </button>
-
-          {/* Tile 2: Telugu */}
           <button
             type="button"
-            className={`tile t2 ${currentLanguage === 'te' ? 'tile-active' : ''}`}
+            className={`tile t2 ${currentLanguage === 'te' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('te')}
             aria-label="తెలుగు భాషను ఎంచుకోండి"
           >
             <b lang="te">అ</b>
             <span lang="te">తెలుగు</span>
           </button>
-
-          {/* Tile 3: Hindi */}
           <button
             type="button"
-            className={`tile t3 ${currentLanguage === 'hi' ? 'tile-active' : ''}`}
+            className={`tile t3 ${currentLanguage === 'hi' ? 'on tile-active' : ''}`}
             onClick={() => handleLanguageChoice('hi')}
             aria-label="हिन्दी भाषा चुनें"
           >
@@ -78,14 +71,14 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({
             <span lang="hi">हिन्दी</span>
           </button>
         </div>
-      </div>
 
-      {/* 3. Touch & Keyboard guidance instruction bar */}
-      <div className="kiosk-instructions-bar">
-        <p>
-          💡 <strong>Touch screen</strong> to select, or press keyboard key <strong>1</strong>,{' '}
-          <strong>2</strong>, or <strong>3</strong>
-        </p>
+        {/* 3. Touch & Keyboard guidance instruction bar */}
+        <div className="kiosk-instructions-bar">
+          <p>
+            💡 <strong>Touch screen</strong> to select, or press keyboard key <strong>1</strong>,{' '}
+            <strong>2</strong>, or <strong>3</strong>
+          </p>
+        </div>
       </div>
     </div>
   );

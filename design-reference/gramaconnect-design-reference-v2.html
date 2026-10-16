@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GramaConnect Design Reference v2: Dawn over the village</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Noto+Sans:wght@500;700&family=Noto+Sans+Telugu:wght@600;800&family=Noto+Sans+Devanagari:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#174A8B;--sky:#43B5E8;--leaf:#279653;--crop:#176B45;--gold:#F3C969;--cream:#FFF9ED;--ink:#183247;--soil:#8A5A3A;--deep:#3B2A1E;--clay:#C8553D;--tur:#E8A91C;--mar:#FF9F1C;--max:1560px}
+*{box-sizing:border-box;margin:0}
+body{font:500 18px/1.45 "Noto Sans","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;color:var(--ink);background:var(--cream);padding-bottom:96px}
+h1,h2,h3,.d{font-family:"Baloo 2","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;font-weight:800;text-transform:none}
+.shell{max-width:var(--max);margin:0 auto;padding:0 28px}          /* ONE shared container: header, hero text, language bar, cards */
+
+/* header */
+header{position:absolute;top:16px;left:0;right:0;z-index:20}
+.bar{display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:999px;background:rgba(255,249,237,.88);backdrop-filter:blur(14px);box-shadow:0 12px 30px rgba(10,30,60,.28)}
+.logo{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4CC36F,#176B45);display:grid;place-items:center}
+.brand h2{font-size:28px;line-height:1;color:var(--blue)}.brand p{font-size:14px;font-weight:700;color:#46607a}
+.tools{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{font:700 16px "Noto Sans",sans-serif;height:48px;padding:0 20px;border-radius:999px;border:2px solid #C7DCEA;background:#fff;color:var(--blue);cursor:pointer;transition:transform .18s,box-shadow .18s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 7px 0 rgba(23,74,139,.14)}.btn.p{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ring{width:52px;height:52px;border-radius:50%;background:conic-gradient(var(--leaf) 0 85%,#DDE9F1 0);display:grid;place-items:center}.ring b{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;font:800 15px "Baloo 2";color:var(--blue)}
+
+/* hero: cinematic dawn. Text lives in the dark sky, art lives below it, never overlapping */
+.hero{position:relative;height:780px;overflow:hidden;background:
+  radial-gradient(circle at 12% 18%,#fff 0 1.5px,transparent 2px) 0 0/190px 150px,
+  radial-gradient(circle at 70% 30%,#fff 0 1.2px,transparent 2px) 0 0/260px 190px,
+  linear-gradient(180deg,#0F3466 0,#174A8B 28%,#43B5E8 52%,#FFD39A 74%,#FF9F1C 100%)}
+.copy{position:relative;z-index:5;padding-top:132px;max-width:1000px}
+.chip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);color:var(--crop);font-weight:800;font-size:16px;padding:7px 18px;border-radius:999px}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--leaf);box-shadow:0 0 0 5px rgba(39,150,83,.25)}
+.copy h1{font-size:clamp(40px,4.4vw,68px);line-height:1.04;color:#fff;margin:18px 0 12px;text-shadow:0 3px 18px rgba(8,28,60,.45)}
+.copy h1 span{color:var(--gold)}
+.copy p{font-size:22px;font-weight:600;color:#EAF6FC;max-width:620px}
+.pills{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.pills span{background:rgba(255,255,255,.95);border-radius:999px;padding:7px 18px;font-weight:700;font-size:16px;color:var(--crop)}
+.sun{position:absolute;right:11%;bottom:150px;width:560px;height:560px;z-index:1;animation:rise 2.6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(260px);opacity:0}to{transform:none;opacity:1}}
+.cloud{position:absolute;z-index:2;height:44px;border-radius:44px;background:rgba(255,255,255,.55);filter:blur(2px);animation:drift 80s linear infinite}
+.cloud:after{content:"";position:absolute;left:24%;top:-20px;width:46%;height:40px;border-radius:40px;background:inherit}
+@keyframes drift{from{transform:translateX(-320px)}to{transform:translateX(2100px)}}
+.scene{position:absolute;left:0;right:0;bottom:0;height:330px;z-index:3}
+.scene svg{width:100%;height:100%;display:block;overflow:visible}
+.par{transition:transform .25s ease-out}
+.tractor{animation:drive 26s ease-in-out infinite alternate}@keyframes drive{to{transform:translateX(-340px)}}
+.wh{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}@keyframes spin{to{transform:rotate(-360deg)}}
+.sw{transform-box:fill-box;transform-origin:50% 100%;animation:sw 3.2s ease-in-out infinite alternate}.sw:nth-child(2n){animation-delay:-1.1s}.sw:nth-child(3n){animation-delay:-2s}@keyframes sw{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+
+/* language bar: equal tiles, equal heights, centred content */
+.lang{position:relative;z-index:6;margin-top:-84px;background:#fff;border-radius:32px;padding:20px 24px;display:grid;grid-template-columns:260px repeat(3,1fr);gap:16px;align-items:center;box-shadow:0 8px 0 rgba(23,74,139,.12),0 28px 50px rgba(10,30,60,.28)}
+.lang h3{font-size:26px;line-height:1.1;color:var(--deep)}.lang small{display:block;font:600 15px "Noto Sans";color:#5b6b78;margin-top:4px}
+.tile{height:88px;display:flex;align-items:center;gap:16px;padding:0 20px;border-radius:24px;border:3px solid transparent;cursor:pointer;font:800 30px/1 "Baloo 2","Noto Sans Telugu","Noto Sans Devanagari";transition:transform .18s,box-shadow .18s}
+.tile b{flex:none;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff}
+.tile:hover{transform:translateY(-4px);box-shadow:0 8px 0 rgba(0,0,0,.09)}
+.t1{background:#E4F1FB;color:var(--blue)}.t1 b{background:var(--blue)}.t2{background:#FFEBD0;color:#8F5200}.t2 b{background:var(--mar)}.t3{background:#DDF3DF;color:var(--crop)}.t3 b{background:var(--leaf)}
+.tile.on{border-color:currentColor;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+
+/* illustrated postcard cards: art on top, text in its own area, button in its own row */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin:48px auto 0}
+.pc{background:#fff;border-radius:32px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;box-shadow:0 10px 0 rgba(23,74,139,.12),0 24px 40px rgba(24,50,71,.2);transition:transform .22s,box-shadow .22s}
+.pc:hover{transform:translateY(-8px);box-shadow:0 18px 0 rgba(23,74,139,.12),0 34px 50px rgba(24,50,71,.26)}
+.art{position:relative;height:230px}.art svg{width:100%;height:100%;display:block}
+.num{position:absolute;top:16px;left:16px;width:44px;height:44px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font:800 22px "Baloo 2";box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1}
+.body h3{font-size:30px;line-height:1.05;color:var(--ink)}.body p{font-size:17px;color:#46586a;margin-top:8px;flex:1}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+.tag{font-weight:800;font-size:15px;padding:6px 14px;border-radius:999px}
+.go{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:800;color:#fff;transition:transform .2s}.pc:hover .go{transform:translateX(6px)}
+.c1 .tag{background:#DDF3DF;color:var(--crop)}.c1 .go{background:var(--leaf)}
+.c2 .tag{background:#FBE0D8;color:#9C3A27}.c2 .go{background:var(--clay)}
+.c3 .tag{background:#FFEFC2;color:#80570A}.c3 .go{background:var(--tur)}
+.c4 .tag{background:#DCE9F9;color:var(--blue)}.c4 .go{background:var(--blue)}
+
+/* docked field strip: readable text, visible dots */
+.strip{position:fixed;left:0;right:0;bottom:0;height:76px;z-index:30;background:linear-gradient(180deg,#6B4630,#3B2A1E);border-top:6px solid var(--leaf);display:flex;align-items:center;justify-content:center;gap:18px;color:#FFF9ED;font-weight:800;font-size:18px}
+.dots{display:flex;gap:10px}.dots i{width:16px;height:16px;border-radius:50%;background:rgba(255,249,237,.35)}.dots .d1{background:#6FE39A}.dots .on{background:var(--gold);box-shadow:0 0 0 4px rgba(243,201,105,.35)}
+@media(max-width:1200px){.grid{grid-template-columns:repeat(2,1fr)}.lang{grid-template-columns:1fr}.tools .btn.h{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><div class="shell"><div class="bar">
+  <div class="logo"><svg width="30" height="30" viewBox="0 0 32 32"><path d="M16 28V15" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M16 17C8 18 6 11 5 8c8-1 11 3 11 9Z" fill="#DDF3DF"/><path d="M16 15c1-6 5-9 11-9 0 7-4 10-11 9Z" fill="#F3C969"/></svg></div>
+  <div class="brand"><h2>GramaConnect</h2><p>Rural Agricultural Services &amp; Employment Kiosk</p></div>
+  <div class="tools"><button class="btn h">Replay announcement</button><button class="btn h">Voice on</button><div class="ring"><b>60s</b></div><button class="btn p">Login</button><button class="btn">New session</button></div>
+</div></div></header>
+
+<section class="hero">
+  <svg class="sun" viewBox="0 0 560 560"><defs><radialGradient id="h"><stop offset="0" stop-color="#FFF3B0"/><stop offset="1" stop-color="#FFB347" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="280" cy="280" r="280" fill="url(#h)"/><g fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"><circle cx="280" cy="280" r="150"/><circle cx="280" cy="280" r="195" stroke-dasharray="3 12"/><circle cx="280" cy="280" r="240"/></g>
+    <circle cx="280" cy="280" r="104" fill="#FFD25A"/><circle cx="280" cy="280" r="80" fill="#FFE590"/></svg>
+  <div class="cloud" style="top:190px;width:200px;animation-delay:-20s"></div><div class="cloud" style="top:300px;width:140px;animation-delay:-55s;opacity:.7"></div>
+  <div class="shell"><div class="copy">
+    <span class="chip"><i></i>Rampur Gram Panchayat kiosk</span>
+    <h1>Connecting Farmers, Workers &amp; <span>Agricultural Machinery</span></h1>
+    <p>Find agricultural services and available machinery through your village kiosk.</p>
+    <div class="pills"><span lang="te">రైతులు, కార్మికులు మరియు వ్యవసాయ యంత్రాలను కలుపుతుంది.</span><span lang="hi">किसानों, श्रमिकों और कृषि मशीनरी को जोड़ता है।</span></div>
+  </div></div>
+  <div class="scene"><svg viewBox="0 0 1600 330" preserveAspectRatio="xMidYMax slice">
+    <defs><filter id="s" x="-5%" y="-30%" width="110%" height="160%"><feDropShadow dx="0" dy="-7" stdDeviation="7" flood-color="#0F2A4A" flood-opacity=".3"/></filter></defs>
+    <g class="par" data-d="6"><path d="M0 120Q260 40 560 112T1100 90T1600 120V330H0Z" fill="#5FB5B0" filter="url(#s)"/></g>
+    <g class="par" data-d="12"><path d="M0 170Q320 100 680 165T1300 150T1600 170V330H0Z" fill="#3FA56E" filter="url(#s)"/>
+      <g transform="translate(1330 40)"><path d="M0 130V30" stroke="#3B2A1E" stroke-width="9" stroke-linecap="round"/><path d="M0 30Q-42 0-76 24M0 30Q-30-22-62-10M0 30Q32-28 66-6M0 30Q44 0 78 30" stroke="#176B45" stroke-width="13" fill="none" stroke-linecap="round"/></g></g>
+    <g class="par" data-d="20"><path d="M760 230Q1120 190 1600 220V330H760Z" fill="#E8B84A" filter="url(#s)"/>
+      <g class="tractor"><g transform="translate(1180 150)"><rect x="0" y="12" width="92" height="36" rx="9" fill="#C8553D"/><rect x="48" y="-14" width="42" height="30" rx="7" fill="#A8412D"/><rect x="54" y="-8" width="24" height="16" rx="3" fill="#EAF6FC"/><g class="wh"><circle cx="24" cy="52" r="26" fill="#3B2A1E"/><circle cx="24" cy="52" r="10" fill="#F3C969"/><path d="M24 40v24M12 52h24" stroke="#8A5A3A" stroke-width="3"/></g><circle cx="82" cy="58" r="16" fill="#3B2A1E"/><circle cx="82" cy="58" r="6" fill="#F3C969"/></g></g></g>
+    <g class="par" data-d="30"><path d="M0 250Q420 205 860 252T1600 240V330H0Z" fill="#176B45" filter="url(#s)"/>
+      <g fill="#2E9A5C"><path class="sw" d="M80 330q6-44-2-66q16 26 12 66Z"/><path class="sw" d="M220 330q6-40 0-60q14 24 10 60Z"/><path class="sw" d="M470 330q6-44-2-66q16 26 12 66Z"/><path class="sw" d="M900 330q6-40 0-60q14 24 10 60Z"/><path class="sw" d="M1180 330q6-44-2-66q16 26 12 66Z"/><path class="sw" d="M1460 330q6-40 0-60q14 24 10 60Z"/></g></g>
+  </svg></div>
+</section>
+
+<main class="shell">
+  <div class="lang">
+    <h3>Select your language<small>భాషను ఎంచుకోండి · अपनी भाषा चुनें</small></h3>
+    <div class="tile t1 on"><b>A</b>English</div><div class="tile t2"><b lang="te">అ</b><span lang="te">తెలుగు</span></div><div class="tile t3"><b lang="hi">अ</b><span lang="hi">हिन्दी</span></div>
+  </div>
+
+  <div class="grid">
+    <article class="pc c1"><div class="art"><svg viewBox="0 0 300 230"><rect width="300" height="230" fill="#CFEFD8"/><circle cx="240" cy="50" r="26" fill="#FFE590"/><path d="M0 120Q80 90 160 118T300 108V230H0Z" fill="#7BCB8D"/><path d="M0 160Q100 130 200 160T300 150V230H0Z" fill="#279653"/><g stroke="#176B45" stroke-width="3"><path d="M20 230l30-60M70 230l30-60M120 230l30-60M170 230l30-60"/></g><circle cx="150" cy="96" r="17" fill="#8A5A3A"/><path d="M126 90Q150 66 174 90Z" fill="#F3C969"/><path d="M122 190V132Q122 112 150 112T178 132V190Z" fill="#fff"/><path d="M122 190V150h56v40Z" fill="#43B5E8"/></svg><div class="num">1</div></div>
+      <div class="body"><h3>Person / Workers</h3><p>Skilled agricultural labourers for sowing, harvesting, weeding and picking.</p><div class="foot"><span class="tag">Press 1</span><span class="go">→</span></div></div></article>
+    <article class="pc c2"><div class="art"><svg viewBox="0 0 300 230"><rect width="300" height="230" fill="#FBE3CF"/><circle cx="60" cy="52" r="24" fill="#FFD25A"/><path d="M0 130Q90 100 170 128T300 118V230H0Z" fill="#B97A52"/><path d="M0 170Q100 140 200 170T300 160V230H0Z" fill="#8A5A3A"/><g stroke="#6F4528" stroke-width="3" opacity=".6"><path d="M0 190Q150 170 300 190M0 212Q150 194 300 212"/></g><rect x="70" y="124" width="96" height="40" rx="9" fill="#C8553D"/><rect x="118" y="96" width="44" height="34" rx="7" fill="#A8412D"/><rect x="124" y="102" width="26" height="18" rx="3" fill="#EAF6FC"/><circle cx="96" cy="168" r="28" fill="#3B2A1E"/><circle cx="96" cy="168" r="11" fill="#F3C969"/><circle cx="156" cy="174" r="17" fill="#3B2A1E"/><circle cx="156" cy="174" r="7" fill="#F3C969"/><rect x="34" y="150" width="38" height="24" rx="4" fill="#E8A91C"/></svg><div class="num">2</div></div>
+      <div class="body"><h3>Tractor &amp; Attachments</h3><p>Tractors with trolleys, ploughs, rotavators, seeders and land levellers.</p><div class="foot"><span class="tag">Press 2</span><span class="go">→</span></div></div></article>
+    <article class="pc c3"><div class="art"><svg viewBox="0 0 300 230"><rect width="300" height="230" fill="#FFF0C4"/><circle cx="244" cy="48" r="26" fill="#FFD25A"/><path d="M0 120Q100 96 200 120T300 112V230H0Z" fill="#F0CF78"/><path d="M0 160Q100 136 200 160T300 152V230H0Z" fill="#E8B84A"/><g stroke="#C99A2E" stroke-width="2"><path d="M0 182H300M0 204H300"/></g><rect x="86" y="116" width="120" height="48" rx="8" fill="#E8A91C"/><rect x="118" y="92" width="52" height="38" rx="6" fill="#F7CE4F"/><rect x="126" y="99" width="36" height="22" rx="3" fill="#EAF6FC"/><rect x="44" y="140" width="44" height="30" rx="4" fill="#C98F12"/><circle cx="64" cy="132" r="18" fill="none" stroke="#9A6A0A" stroke-width="5" stroke-dasharray="7 5"/><circle cx="120" cy="170" r="24" fill="#3B2A1E"/><circle cx="120" cy="170" r="9" fill="#F3C969"/><circle cx="188" cy="174" r="16" fill="#3B2A1E"/></svg><div class="num">3</div></div>
+      <div class="body"><h3>Harvester Machines</h3><p>Combine harvesters, paddy cutters, reapers and threshers with operators.</p><div class="foot"><span class="tag">Press 3</span><span class="go">→</span></div></div></article>
+    <article class="pc c4"><div class="art"><svg viewBox="0 0 300 230"><rect width="300" height="230" fill="#D5EAFA"/><circle cx="60" cy="50" r="24" fill="#FFE590"/><path d="M0 120Q100 96 200 120T300 112V230H0Z" fill="#7BCB8D"/><path d="M0 150H300V230H0Z" fill="#3FA56E"/><path d="M0 178H300V214H0Z" fill="#E7D2A6"/><g stroke="#fff" stroke-width="4" stroke-dasharray="16 12"><path d="M0 196H300"/></g><rect x="60" y="116" width="100" height="56" rx="6" fill="#F0B91C"/><path d="M70 116q12-22 26-8t30-6 26 8" fill="#CBA25E"/><rect x="160" y="130" width="62" height="42" rx="8" fill="#1B6FC4"/><rect x="172" y="137" width="30" height="18" rx="3" fill="#EAF6FC"/><circle cx="92" cy="176" r="20" fill="#3B2A1E"/><circle cx="92" cy="176" r="8" fill="#F3C969"/><circle cx="196" cy="176" r="20" fill="#3B2A1E"/><circle cx="196" cy="176" r="8" fill="#F3C969"/></svg><div class="num">4</div></div>
+      <div class="body"><h3>Mini Truck Transport</h3><p>Small agricultural transport vehicles for crops, fertilizers and market haulage.</p><div class="foot"><span class="tag">Press 4</span><span class="go">→</span></div></div></article>
+  </div>
+</main>
+
+<div class="strip"><svg width="54" height="46" viewBox="0 0 54 46"><path d="M27 44V20" stroke="#6FE39A" stroke-width="4" stroke-linecap="round"/><path d="M27 24C14 26 10 16 8 10c14-2 20 4 19 14Z" fill="#6FE39A"/><path d="M27 20c2-10 9-15 19-15 0 12-7 17-19 15Z" fill="#B7F5C9"/></svg>
+  <div class="dots"><i class="d1"></i><i class="on"></i><i></i><i></i><i></i></div><span>Stage 2 of 5: Growing</span></div>
+
+<script>
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
+  const L=[...document.querySelectorAll(".par")];
+  addEventListener("pointermove",e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+    L.forEach(l=>{const d=+l.dataset.d;l.style.transform=`translate(${-x*d}px,${-y*d/2}px)`})});
+}
+</script>
+</body></html>
