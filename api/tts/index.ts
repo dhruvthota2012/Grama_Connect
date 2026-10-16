@@ -39,6 +39,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     res.setHeader('Content-Type', 'application/json');
     res.end(
       JSON.stringify({
+        configured: false,
         error: 'GOOGLE_TTS_NOT_CONFIGURED',
         message: 'Google Cloud TTS API key is not configured in Vercel environment variables.',
       })

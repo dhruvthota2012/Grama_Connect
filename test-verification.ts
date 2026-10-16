@@ -1085,6 +1085,56 @@ function runTestSuite() {
     'Audio guidance wired into every major step: Services, Subcategories, Registrations, Search Results, Confirmations'
   );
 
+  // --- Test Group 26: Vercel TTS Routing & Client Fallback Resilience ---
+  console.log('\n--- Test Group 26: Vercel TTS Routing & Client Fallback Resilience ---');
+  const vercelJsonContent = fs.readFileSync('./vercel.json', 'utf-8');
+  const parsedVercelJson = JSON.parse(vercelJsonContent);
+  const hasVercelTtsRewrite = parsedVercelJson.rewrites?.some(
+    (r: any) => r.source === '/api/tts' && r.destination === '/api/tts/index'
+  );
+  assert(hasVercelTtsRewrite, 'vercel.json rewrites /api/tts to /api/tts/index');
+
+  const ttsIndexCode = fs.readFileSync('./api/tts/index.ts', 'utf-8');
+  assert(
+    ttsIndexCode.includes('res.statusCode = 503') && ttsIndexCode.includes('configured: false'),
+    'api/tts/index.ts returns 503 with configured: false when GOOGLE_TTS_API_KEY is not set'
+  );
+
+  const ttsStatusCode = fs.readFileSync('./api/tts/status.ts', 'utf-8');
+  assert(
+    ttsStatusCode.includes('configured: Boolean(apiKey)'),
+    'api/tts/status.ts accurately reports configured true/false based on API key'
+  );
+
+  const speechGuidanceCode = fs.readFileSync('./src/utils/speechGuidance.ts', 'utf-8');
+  assert(
+    speechGuidanceCode.includes('hasCheckedServerStatus') &&
+    speechGuidanceCode.includes('speakViaBrowserSpeech'),
+    'speechGuidance.ts caches server status per session and always falls back to browser speechSynthesis'
+  );
+
+  const homeMenuCode = fs.readFileSync('./src/components/HomeMenu.tsx', 'utf-8');
+  const homeCardClick = homeMenuCode.slice(homeMenuCode.indexOf('const handleCardClick'));
+  assert(
+    homeCardClick.includes('armedOptionRef.current = option') &&
+    homeCardClick.indexOf('armedOptionRef.current = option') < homeCardClick.indexOf('speakText('),
+    'HomeMenu arms option BEFORE speaking and never awaits speech completion'
+  );
+
+  const serviceCardClick = serviceSelCode.slice(serviceSelCode.indexOf('const handleCardClick'));
+  assert(
+    serviceCardClick.includes('armedServiceRef.current = serviceType') &&
+    serviceCardClick.indexOf('armedServiceRef.current = serviceType') < serviceCardClick.indexOf('speakText('),
+    'ServiceSelection arms service BEFORE speaking and never awaits speech completion'
+  );
+
+  const subcatCardClick = subcatGridCode.slice(subcatGridCode.indexOf('const handleCardClick'));
+  assert(
+    subcatCardClick.includes('armedSubcatRef.current = item.id') &&
+    subcatCardClick.indexOf('armedSubcatRef.current = item.id') < subcatCardClick.indexOf('speakText('),
+    'SubcategoryGrid arms item BEFORE speaking and never awaits speech completion'
+  );
+
   console.log('\n====================================================');
   console.log(`SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log('====================================================\n');

@@ -75,6 +75,18 @@ let serverTtsStatusState = {
   checked: false,
 };
 
+let hasCheckedServerStatus = false;
+let serverStatusCheckPromise: Promise<boolean> | null = null;
+let isServerConfigured = false;
+
+export function resetServerTtsStatusCache(): void {
+  hasCheckedServerStatus = false;
+  serverStatusCheckPromise = null;
+  isServerConfigured = false;
+  serverTtsStatusState.checked = false;
+  serverTtsStatusState.configured = false;
+}
+
 // Diagnostic state
 let latestDiagnostics: SpeechDiagnostics = {
   isSpeechSynthesisAvailable: typeof window !== 'undefined' && 'speechSynthesis' in window,
@@ -235,29 +247,97 @@ if (typeof window !== 'undefined') {
 }
 
 /**
- * Checks server TTS endpoint status.
+ * Checks server TTS endpoint status once per session and caches the result.
+ * Avoids any repeated network requests if the server is unconfigured.
  */
 export async function checkServerTtsStatus(): Promise<ServerTtsStatus | null> {
   if (typeof window === 'undefined') return null;
 
-  try {
-    const res = await fetch(getApiUrl('/api/tts/status'));
-    if (res.ok) {
-      const data = (await res.json()) as ServerTtsStatus;
+  if (hasCheckedServerStatus) {
+    return {
+      status: 'ok',
+      configured: isServerConfigured,
+      provider: serverTtsStatusState.provider,
+      apiKeyConfigured: serverTtsStatusState.apiKeyConfigured,
+      voices: {
+        te: 'te-IN-Standard-A',
+        hi: 'hi-IN-Standard-A',
+        en: 'en-IN-Standard-A',
+      },
+      hasPreGeneratedAudio: true,
+    };
+  }
+
+  if (serverStatusCheckPromise) {
+    await serverStatusCheckPromise;
+    return {
+      status: 'ok',
+      configured: isServerConfigured,
+      provider: serverTtsStatusState.provider,
+      apiKeyConfigured: serverTtsStatusState.apiKeyConfigured,
+      voices: {
+        te: 'te-IN-Standard-A',
+        hi: 'hi-IN-Standard-A',
+        en: 'en-IN-Standard-A',
+      },
+      hasPreGeneratedAudio: true,
+    };
+  }
+
+  serverStatusCheckPromise = (async () => {
+    try {
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
+      const res = await fetch(getApiUrl('/api/tts/status'), {
+        signal: controller ? controller.signal : undefined,
+      });
+      if (timeoutId) clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = (await res.json()) as ServerTtsStatus;
+        isServerConfigured = Boolean(data.configured);
+        serverTtsStatusState = {
+          configured: isServerConfigured,
+          provider: data.provider || 'google-cloud-tts',
+          apiKeyConfigured: Boolean(data.apiKeyConfigured ?? isServerConfigured),
+          checked: true,
+        };
+      } else {
+        isServerConfigured = false;
+        serverTtsStatusState = {
+          configured: false,
+          provider: 'unknown',
+          apiKeyConfigured: false,
+          checked: true,
+        };
+      }
+    } catch {
+      isServerConfigured = false;
       serverTtsStatusState = {
-        configured: data.configured,
-        provider: data.provider,
-        apiKeyConfigured: data.apiKeyConfigured,
+        configured: false,
+        provider: 'unknown',
+        apiKeyConfigured: false,
         checked: true,
       };
+    } finally {
+      hasCheckedServerStatus = true;
       updateDiagnostics();
-      return data;
     }
-  } catch (e) {
-    serverTtsStatusState.checked = true;
-    updateDiagnostics();
-  }
-  return null;
+    return isServerConfigured;
+  })();
+
+  await serverStatusCheckPromise;
+  return {
+    status: 'ok',
+    configured: isServerConfigured,
+    provider: serverTtsStatusState.provider,
+    apiKeyConfigured: serverTtsStatusState.apiKeyConfigured,
+    voices: {
+      te: 'te-IN-Standard-A',
+      hi: 'hi-IN-Standard-A',
+      en: 'en-IN-Standard-A',
+    },
+    hasPreGeneratedAudio: true,
+  };
 }
 
 /**
@@ -478,17 +558,88 @@ export function findBestVoice(language: Language): SpeechSynthesisVoice | undefi
 }
 
 /**
- * Plays audio through an HTMLAudioElement.
+ * Ensures voices are loaded from window.speechSynthesis, waiting up to 250ms
+ * if voices are initially empty on first interaction.
  */
-function playAudioUrl(url: string, seqId?: number): Promise<void> {
+async function ensureVoicesLoaded(): Promise<SpeechSynthesisVoice[]> {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return [];
+  }
+  let voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    cachedVoices = voices;
+    return voices;
+  }
+  await new Promise<void>((resolve) => {
+    let resolved = false;
+    const finish = () => {
+      if (!resolved) {
+        resolved = true;
+        try {
+          const v = window.speechSynthesis.getVoices();
+          if (v && v.length > 0) cachedVoices = v;
+        } catch {}
+        resolve();
+      }
+    };
+    const timer = setTimeout(finish, 250);
+    try {
+      window.speechSynthesis.addEventListener(
+        'voiceschanged',
+        () => {
+          clearTimeout(timer);
+          finish();
+        },
+        { once: true }
+      );
+    } catch {
+      // ignore
+    }
+  });
+  return cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+}
+
+/**
+ * Plays audio through an HTMLAudioElement with a 4-second timeout and robust error handling.
+ */
+function playAudioUrl(url: string, seqId?: number, timeoutMs = 4000): Promise<void> {
   return new Promise((resolve, reject) => {
     if (seqId !== undefined && seqId !== speechSequenceId) {
       resolve();
       return;
     }
 
-    const audio = new Audio(url);
+    if (typeof window === 'undefined') {
+      resolve();
+      return;
+    }
+
+    let settled = false;
+    let timer: any = null;
+
+    const cleanup = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    const audio = new Audio();
     activeAudioElement = audio;
+
+    timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      if (activeAudioElement === audio) {
+        activeAudioElement = null;
+      }
+      try {
+        audio.pause();
+        audio.src = '';
+      } catch {}
+      notifySpeechListeners(false);
+      reject(new Error(`Audio playback timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
 
     audio.onplay = () => {
       if (seqId !== undefined && seqId !== speechSequenceId) {
@@ -499,6 +650,9 @@ function playAudioUrl(url: string, seqId?: number): Promise<void> {
     };
 
     audio.onended = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
       if (activeAudioElement === audio) {
         activeAudioElement = null;
       }
@@ -507,14 +661,25 @@ function playAudioUrl(url: string, seqId?: number): Promise<void> {
     };
 
     audio.onerror = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
       if (activeAudioElement === audio) {
         activeAudioElement = null;
       }
       notifySpeechListeners(false);
-      reject(new Error(`Audio playback error: ${audio.error ? audio.error.message : 'Unknown'}`));
+      const errMsg = audio.error
+        ? `MediaError ${audio.error.code}: ${audio.error.message || 'Source could not be decoded or loaded'}`
+        : 'Audio load/network error';
+      reject(new Error(errMsg));
     };
 
+    audio.src = url;
+
     audio.play().catch((err) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
       notifySpeechListeners(false);
       if (activeAudioElement === audio) {
         activeAudioElement = null;
@@ -525,10 +690,131 @@ function playAudioUrl(url: string, seqId?: number): Promise<void> {
 }
 
 /**
+ * Synthesizes speech using the browser's built-in SpeechSynthesis API.
+ * Preserves rural kiosk pacing (0.88 rate), pitch (1.05), sentence chunking,
+ * and Chrome keep-alive.
+ * If no authentic voice exists for language, logs a single clear warning
+ * and attempts default synthesizer voice without throwing.
+ */
+function speakViaBrowserSpeech(
+  normalizedText: string,
+  language: Language,
+  currentSeq: number,
+  browserVoice?: SpeechSynthesisVoice
+): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('[SpeechGuidance] SpeechSynthesis API not supported in this browser.');
+      resolve();
+      return;
+    }
+
+    if (speechSequenceId !== currentSeq) {
+      resolve();
+      return;
+    }
+
+    const voice = browserVoice || findBestVoice(language);
+    const targetLangCode = getSpeechLangCode(language);
+
+    if (!voice) {
+      console.warn(
+        `[SpeechGuidance] No authentic browser voice found for language "${language}" (${targetLangCode}). Synthesizer attempting playback with system voice.`
+      );
+    }
+
+    latestDiagnostics.lastAttempt = {
+      text: normalizedText,
+      lang: language,
+      engine: 'browser_speech_api',
+      voiceName: voice ? `${voice.name} (${voice.lang})` : `System Default (${targetLangCode})`,
+      status: 'playing',
+      timestamp: Date.now(),
+    };
+    updateDiagnostics();
+
+    try {
+      // Split into natural sentence chunks to prevent Chrome 15s freeze
+      const rawChunks = normalizedText.split(/(?<=[.!?।\n])\s+/).filter(Boolean);
+      const chunks = rawChunks.length > 0 ? rawChunks : [normalizedText];
+
+      let chunkIndex = 0;
+      startKeepAlive();
+
+      const speakNextChunk = () => {
+        if (speechSequenceId !== currentSeq || chunkIndex >= chunks.length) {
+          stopKeepAlive();
+          notifySpeechListeners(false);
+          if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
+            latestDiagnostics.lastAttempt.status = 'success';
+            updateDiagnostics();
+          }
+          resolve();
+          return;
+        }
+
+        const chunkText = chunks[chunkIndex++];
+        const utterance = new SpeechSynthesisUtterance(chunkText);
+        utterance.lang = targetLangCode;
+        if (voice) {
+          utterance.voice = voice;
+        }
+        utterance.rate = 0.88; // Relaxed rural kiosk pacing
+        utterance.pitch = 1.05;
+
+        utterance.onstart = () => {
+          if (speechSequenceId === currentSeq) {
+            notifySpeechListeners(true);
+          }
+        };
+
+        utterance.onend = () => {
+          if (speechSequenceId === currentSeq) {
+            speakNextChunk();
+          } else {
+            stopKeepAlive();
+            notifySpeechListeners(false);
+            resolve();
+          }
+        };
+
+        utterance.onerror = (event) => {
+          stopKeepAlive();
+          notifySpeechListeners(false);
+          const errDetail = event.error || 'SpeechSynthesisUtterance error';
+          console.warn('Browser TTS utterance event:', errDetail);
+          if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
+            latestDiagnostics.lastAttempt.status = 'error';
+            latestDiagnostics.lastAttempt.errorDetails = errDetail;
+            updateDiagnostics();
+          }
+          resolve();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      };
+
+      speakNextChunk();
+    } catch (err: any) {
+      stopKeepAlive();
+      notifySpeechListeners(false);
+      console.warn('[SpeechGuidance] Exception in browser speech synthesis:', err?.message || err);
+      if (latestDiagnostics.lastAttempt) {
+        latestDiagnostics.lastAttempt.status = 'error';
+        latestDiagnostics.lastAttempt.errorDetails = err?.message || String(err);
+        updateDiagnostics();
+      }
+      resolve();
+    }
+  });
+}
+
+/**
  * Speaks text using the best available engine:
  * 1. Pre-generated audio file (if text matches fixed kiosk phrases)
  * 2. Browser SpeechSynthesis (if authentic voice for that language is installed)
- * 3. Server Cloud TTS fallback (/api/tts)
+ * 3. Server Cloud TTS fallback (/api/tts - if configured)
+ * 4. ALWAYS falls back to browser SpeechSynthesis on server failure / unconfigured state
  */
 export async function speakText(
   text: string,
@@ -573,7 +859,7 @@ export async function speakText(
       updateDiagnostics();
 
       try {
-        await playAudioUrl(preRecordedPath, currentSeq);
+        await playAudioUrl(preRecordedPath, currentSeq, 4000);
         if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
           latestDiagnostics.lastAttempt.status = 'success';
           updateDiagnostics();
@@ -585,139 +871,71 @@ export async function speakText(
     }
   }
 
-  // 2. Check if Browser has an authentic voice for this language
+  // Ensure voices are loaded if browser synthesis is ready
+  await ensureVoicesLoaded();
+  if (speechSequenceId !== currentSeq) {
+    return;
+  }
+
   const browserVoice = findBestVoice(language);
 
+  // 2. If authentic browser voice exists and cloud is not explicitly forced, use browser voice immediately
   if (forceEngine !== 'cloud' && browserVoice) {
-    // Authentic voice exists in the browser!
-    latestDiagnostics.lastAttempt = {
-      text: normalizedText,
-      lang: language,
-      engine: 'browser_speech_api',
-      voiceName: `${browserVoice.name} (${browserVoice.lang})`,
-      status: 'playing',
-      timestamp: Date.now(),
-    };
-    updateDiagnostics();
-
     // Chrome buffer: small pause before speaking
     await new Promise((r) => setTimeout(r, 60));
     if (speechSequenceId !== currentSeq) {
       return;
     }
+    return speakViaBrowserSpeech(normalizedText, language, currentSeq, browserVoice);
+  }
 
-    return new Promise((resolve) => {
-      try {
-        // Split into natural sentence chunks to prevent Chrome 15s freeze
-        const rawChunks = normalizedText.split(/(?<=[.!?।\n])\s+/).filter(Boolean);
-        const chunks = rawChunks.length > 0 ? rawChunks : [normalizedText];
+  // 3. Otherwise: Check if Server TTS is configured (checked once per session)
+  if (!hasCheckedServerStatus) {
+    await checkServerTtsStatus();
+  }
 
-        let chunkIndex = 0;
-        startKeepAlive();
+  const isServerAvailable = isServerConfigured;
 
-        const speakNextChunk = () => {
-          if (speechSequenceId !== currentSeq || chunkIndex >= chunks.length) {
-            stopKeepAlive();
-            notifySpeechListeners(false);
-            if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
-              latestDiagnostics.lastAttempt.status = 'success';
-              updateDiagnostics();
-            }
-            resolve();
-            return;
-          }
+  // If server is configured and forceEngine is not 'browser', try cloud TTS
+  if (forceEngine !== 'browser' && isServerAvailable) {
+    const ttsUrl = getApiUrl(`/api/tts?text=${encodeURIComponent(normalizedText)}&lang=${language}`);
 
-          const chunkText = chunks[chunkIndex++];
-          const utterance = new SpeechSynthesisUtterance(chunkText);
-          utterance.lang = getSpeechLangCode(language);
-          utterance.voice = browserVoice;
-          utterance.rate = 0.88; // Relaxed rural kiosk pacing
-          utterance.pitch = 1.05;
+    latestDiagnostics.lastAttempt = {
+      text: normalizedText,
+      lang: language,
+      engine: 'google_cloud_tts',
+      voiceName: language === 'te' ? 'te-IN-Standard-A' : language === 'hi' ? 'hi-IN-Standard-A' : 'en-IN-Standard-A',
+      status: 'loading',
+      timestamp: Date.now(),
+    };
+    updateDiagnostics();
 
-          utterance.onstart = () => {
-            if (speechSequenceId === currentSeq) {
-              notifySpeechListeners(true);
-            }
-          };
-
-          utterance.onend = () => {
-            if (speechSequenceId === currentSeq) {
-              speakNextChunk();
-            } else {
-              stopKeepAlive();
-              notifySpeechListeners(false);
-              resolve();
-            }
-          };
-
-          utterance.onerror = (event) => {
-            stopKeepAlive();
-            notifySpeechListeners(false);
-            const errDetail = event.error || 'SpeechSynthesisUtterance error';
-            console.warn('Browser TTS utterance error:', errDetail);
-            if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
-              latestDiagnostics.lastAttempt.status = 'error';
-              latestDiagnostics.lastAttempt.errorDetails = errDetail;
-              updateDiagnostics();
-            }
-            resolve();
-          };
-
-          window.speechSynthesis.speak(utterance);
-        };
-
-        speakNextChunk();
-      } catch (err: any) {
-        stopKeepAlive();
-        notifySpeechListeners(false);
-        if (latestDiagnostics.lastAttempt) {
-          latestDiagnostics.lastAttempt.status = 'error';
-          latestDiagnostics.lastAttempt.errorDetails = err?.message || String(err);
-          updateDiagnostics();
-        }
-        resolve();
+    try {
+      await playAudioUrl(ttsUrl, currentSeq, 4000);
+      if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
+        latestDiagnostics.lastAttempt.status = 'success';
+        updateDiagnostics();
       }
-    });
-  }
-
-  // 3. Fallback: Browser lacks authentic voice (Typical for Telugu in desktop Chrome/Windows)
-  // Request Server TTS endpoint /api/tts
-  const ttsUrl = getApiUrl(`/api/tts?text=${encodeURIComponent(normalizedText)}&lang=${language}`);
-
-  latestDiagnostics.lastAttempt = {
-    text: normalizedText,
-    lang: language,
-    engine: 'google_cloud_tts',
-    voiceName: language === 'te' ? 'te-IN-Standard-A' : language === 'hi' ? 'hi-IN-Standard-A' : 'en-IN-Standard-A',
-    status: 'loading',
-    timestamp: Date.now(),
-  };
-  updateDiagnostics();
-
-  try {
-    await playAudioUrl(ttsUrl, currentSeq);
-    if (speechSequenceId === currentSeq && latestDiagnostics.lastAttempt) {
-      latestDiagnostics.lastAttempt.status = 'success';
-      updateDiagnostics();
-    }
-  } catch (err: any) {
-    console.warn(`[TTS Fallback Notice for ${language}]:`, err?.message || err);
-    if (latestDiagnostics.lastAttempt) {
-      latestDiagnostics.lastAttempt.status = 'error';
-      latestDiagnostics.lastAttempt.errorDetails =
-        err?.message ||
-        `No native browser voice for "${language}" and cloud TTS fallback audio could not be played.`;
-      updateDiagnostics();
+      return;
+    } catch (err: any) {
+      console.warn(
+        `[Cloud TTS Failed for ${language} - Falling back to browser speech]:`,
+        err?.message || err
+      );
+      // Fall through to browser speech fallback! Never fail silently!
     }
   }
+
+  // 4. Fallback: Browser Web Speech API (Always called if server is unconfigured, errored, timed out, or non-200)
+  return speakViaBrowserSpeech(normalizedText, language, currentSeq, browserVoice);
 }
 
 /**
  * Replays the last spoken announcement on user demand.
  */
-export function replaySpeech() {
+export function replaySpeech(): Promise<void> | void {
   if (lastSpokenText) {
-    speakText(lastSpokenText, lastSpokenLang);
+    return speakText(lastSpokenText, lastSpokenLang);
   }
 }
 

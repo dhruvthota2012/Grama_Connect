@@ -184,6 +184,7 @@ export function ttsPlugin(): Plugin {
           res.setHeader('Content-Type', 'application/json');
           res.end(
             JSON.stringify({
+              configured: false,
               error: 'TTS_UNAVAILABLE',
               message:
                 'Telugu TTS audio is unavailable because no browser voice is installed, no local pre-generated file matches this text, and Google Cloud TTS API key is not configured.',

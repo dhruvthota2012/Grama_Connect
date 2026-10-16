@@ -2,6 +2,14 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/tts",
+      "destination": "/api/tts/index"
+    },
+    {
+      "source": "/api/tts/",
+      "destination": "/api/tts/index"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
